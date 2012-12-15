@@ -56,7 +56,7 @@
     }
 }
 
-- (BOOL)ccKeyUp:(NSEvent*)event
+- (BOOL)ccKeyDown:(NSEvent*)event
 {
     if (!keyPressed) {
         [self goToNextScreen];

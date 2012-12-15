@@ -13,8 +13,13 @@ const int TilesCountX = 15;
 const int TilesCountY = 15;
 const int TileWidth = 40;
 const int TileHeight = 40;
-const int TilesStartX = (1280-TilesCountX*TileWidth)/2;
-const int TilesStartY = (720-TilesCountY*TileHeight)/2;
+const int TilesTotalWidth = TilesCountX*TileWidth;
+const int TilesTotalHeight = TilesCountY*TileHeight;
+const int TilesStartX = (1280-TilesTotalWidth)/2;
+const int TilesStartY = (720-TilesTotalHeight)/2;
+const int TilesEndX = TilesStartX + TilesTotalWidth;
+const int TilesEndY = TilesStartY + TilesTotalHeight;
+const int TileTypesCount = 2;
 
 struct Tile {
     int x, y;
@@ -32,9 +37,10 @@ struct GameState {
     Tile tiles[TilesCountY][TilesCountX];    
 };
 
-@interface GameScene : CCNode {
+@interface GameScene : CCLayer {
     GameState state;
     CCSprite* tileSprites[TilesCountY][TilesCountX];
+    CGSize screenSize;
 }
 
 + (CCScene *) scene;

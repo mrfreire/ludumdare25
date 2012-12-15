@@ -48,7 +48,7 @@
 	return self;
 }
 
--(BOOL)ccKeyUp:(NSEvent*)event
+- (BOOL)ccKeyDown:(NSEvent*)event
 {
     [self startGame];
     return YES;
