@@ -10,15 +10,20 @@
 
 @implementation GameScene
 
-+ (CCScene*)scene
++ (CCScene*)sceneWithLevel:(int)level
 {
 	CCScene* scene = [CCScene node];
 	
-	GameScene* layer = [GameScene node];
+	GameScene* layer = [[[GameScene alloc] initWithLevel:level] autorelease];
 	
 	[scene addChild:layer];
 	
 	return scene;
+}
+
+- (void)dealloc
+{
+    [super dealloc];
 }
 
 - (void)setSpriteY:(int)i X:(int)j type:(int)type
@@ -51,23 +56,28 @@
     return 0;
 }
 
-- (void)loadLevel:(int)level
+- (void)loadLevel
 {
-    // Set tiles
-    for (int i=0; i<TilesCountY; ++i) {
-        for (int j=0; j<TilesCountY; ++j) {
-            Tile tile = Tile();
-            tile.type = 0;
-            tile.x = j;
-            tile.y = i;
-            tile.isExit = false;
-            state.tiles[i][j] = tile;
+    FILE* f = fopen(((NSString*)[NSString stringWithFormat:@"level%d.bin", level]).UTF8String, "r");
+    if (f) {
+        fread(&state, sizeof(state), 1, f);
+        fclose(f);
+    } else {  // level doesn't exist
+        // Set tiles
+        for (int i=0; i<TilesCountY; ++i) {
+            for (int j=0; j<TilesCountY; ++j) {
+                Tile tile = Tile();
+                tile.type = Floor;
+                tile.x = j;
+                tile.y = i;
+                tile.isExit = false;
+                state.tiles[i][j] = tile;
+            }
         }
     }
-
-    // Set character
-    state.player.tileX = 1;
-    state.player.tileY = TilesCountY-2;
+    
+    // Reset character
+    state.player.rotation = 0;
     state.player.position = [self centerOfTileY:state.player.tileY X:state.player.tileX];
 
     // Create sprites
@@ -87,21 +97,25 @@
     [self addChild:playerSprite];
 }
 
-- (id)init
+- (id)initWithLevel:(int)level_
 {
     self = [super init];
 	if (self) {
+        level = level_;
+        
 		screenSize = [[CCDirector sharedDirector] winSize];
         
         board = [CCNode node];
-		//CCLabelTTF *label = [CCLabelTTF labelWithString:@"Game" fontName:@"Marker Felt" fontSize:32];
-		//label.position = ccp(size.width/2, size.height/2);
-		//[self addChild:label];
+		
+        CCLabelTTF *label = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"LEVEL %d", level] fontName:@"Monaco" fontSize:20];
+        label.anchorPoint = ccp(0, 0);
+		label.position = ccp(20, 20);
+		[self addChild:label];
         
-        [self loadLevel:0];
+        [self loadLevel];
         
         [self schedule:@selector(update:)];
-
+        
         self.isKeyboardEnabled = YES;
         self.isMouseEnabled = YES;
         
@@ -113,7 +127,7 @@
 - (CGPoint)getCorrectedPositionForPosition:(CGPoint)originalPos dx:(float)dx dy:(float)dy
 {
     Tile* originalTile = [self tileContainingPosition:originalPos];
-    assert(originalTile && originalTile->type == 0);
+    assert(originalTile && TileIsWalkable[originalTile->type]);
     CGPoint originalTilePos = [self centerOfTileY:originalTile->y X:originalTile->x];
 
     CGPoint newPos = originalPos;
@@ -126,10 +140,10 @@
     Tile* tileTopRight = [self tileContainingPosition:CGPointMake(newPos.x+hw, newPos.y+hh)];
     Tile* tileBottomLeft = [self tileContainingPosition:CGPointMake(newPos.x-hw, newPos.y-hh)];
     Tile* tileBottomRight = [self tileContainingPosition:CGPointMake(newPos.x+hw, newPos.y-hh)];
-    bool topRightClear = tileTopRight && tileTopRight->type == 0;
-    bool topLeftClear = tileTopLeft && tileTopLeft->type == 0;
-    bool bottomRightClear = tileBottomRight && tileBottomRight->type == 0;
-    bool bottomLeftClear = tileBottomLeft && tileBottomLeft->type == 0;
+    bool topRightClear = tileTopRight && TileIsWalkable[tileTopRight->type];
+    bool topLeftClear = tileTopLeft && TileIsWalkable[tileTopLeft->type];
+    bool bottomRightClear = tileBottomRight && TileIsWalkable[tileBottomRight->type];
+    bool bottomLeftClear = tileBottomLeft && TileIsWalkable[tileBottomLeft->type];
     if (dx > 0) {  // moving right
         if (!topRightClear || !bottomRightClear) {
             newPos.x = originalTilePos.x;
@@ -154,6 +168,11 @@
 
 - (void)update:(ccTime)dt
 {
+    if (finished) {
+        [self unscheduleAllSelectors];
+        [[CCEventDispatcher sharedDispatcher] removeAllMouseDelegates];
+    }
+    
     Tile* playerTile = [self tileContainingPosition:state.player.position];
 
     /*static Tile* oldTile = playerTile;
@@ -196,7 +215,7 @@
 - (void)clickedOnTileY:(int)tileY X:(int)tileX
 {
     NSLog(@"clicked on tile %d, %d", tileY, tileX);
-    state.tiles[tileY][tileX].type = (state.tiles[tileY][tileX].type + 1) % TileTypesCount;
+    state.tiles[tileY][tileX].type = editorSelectedTile;
     [self setSpriteY:tileY X:tileX type:state.tiles[tileY][tileX].type];
 }
 
@@ -238,6 +257,15 @@
 	} else if (keyCode == 100) {
 		movingRight = true;
 	}
+    
+    // Editor
+    if (keyCode >= 48 && keyCode <= 57) {
+        int type = keyCode-48;
+        if (type < TileTypesCount) {
+            editorSelectedTile = type;
+        }
+    }
+
     return YES;
 }
 
@@ -257,6 +285,37 @@
 	} else if (keyCode == 100) {
 		movingRight = false;
 	}
+    
+    // Editor
+    if (keyCode == 112) {  // p
+        NSLog(@"Saving level data");
+        FILE* f = fopen(((NSString*)[NSString stringWithFormat:@"level%d.bin", level]).UTF8String, "w");
+        if (f) {
+            fwrite(&state, sizeof(state), 1, f);
+            fclose(f);
+        } else {
+            assert(0);
+        }
+
+        f = fopen(((NSString*)[NSString stringWithFormat:@"/Users/manuel/level%d.bin", level]).UTF8String, "w");
+        if (f) {
+            fwrite(&state, sizeof(state), 1, f);
+            fclose(f);
+        } else {
+            assert(0);
+        }
+    }
+    if (keyCode == 44) {  // ,
+        if (level > 0) {
+            finished = true;
+            [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:0.5 scene:[GameScene sceneWithLevel:level-1]]];
+        }
+    }
+    if (keyCode == 46) {  // .
+        finished = true;
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:0.5 scene:[GameScene sceneWithLevel:level+1]]];
+    }
+    
     return YES;
 }
 

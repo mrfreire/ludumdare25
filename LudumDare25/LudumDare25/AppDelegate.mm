@@ -34,7 +34,7 @@
 	// Center main window
 	[window_ center];
 	
-	[director runWithScene:[GameScene scene]];
+	[director runWithScene:[GameScene sceneWithLevel:0]];
 }
 
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) theApplication

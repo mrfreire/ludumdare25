@@ -19,8 +19,25 @@ const int TilesStartX = (1280-TilesTotalWidth)/2;
 const int TilesStartY = (720-TilesTotalHeight)/2;
 const int TilesEndX = TilesStartX + TilesTotalWidth;
 const int TilesEndY = TilesStartY + TilesTotalHeight;
-const int TileTypesCount = 2;
 const float PlayerSpeed = 150.0f;
+
+enum TileTypes {
+    Floor = 0,
+    Wall,
+    Vault,
+    Door,
+    Exit,
+    
+    TileTypesCount
+};
+
+const bool TileIsWalkable[TileTypesCount] = {
+    true,
+    false,
+    true,
+    false,
+    true
+};
 
 struct Tile {
     int x, y;
@@ -53,6 +70,7 @@ struct GameState {
 };
 
 @interface GameScene : CCLayer {
+    int level;
     GameState state;
     CCSprite* tileSprites[TilesCountY][TilesCountX];
     CCNode* board;
@@ -62,8 +80,12 @@ struct GameState {
     bool movingDown;
     bool movingLeft;
     bool movingRight;
+    int editorSelectedTile;
+    bool finished;
 }
 
-+ (CCScene *) scene;
++ (CCScene*)sceneWithLevel:(int)level;
+
+- (id)initWithLevel:(int)level;
 
 @end
