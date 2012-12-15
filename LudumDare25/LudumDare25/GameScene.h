@@ -20,6 +20,7 @@ const int TilesStartY = (720-TilesTotalHeight)/2;
 const int TilesEndX = TilesStartX + TilesTotalWidth;
 const int TilesEndY = TilesStartY + TilesTotalHeight;
 const int TileTypesCount = 2;
+const float PlayerSpeed = 150.0f;
 
 struct Tile {
     int x, y;
@@ -33,14 +34,34 @@ struct Tile {
     {}
 };
 
+struct Player {
+    CGPoint position;
+    int tileX, tileY;
+    float rotation;
+    
+    Player()
+    : position(CGPointZero)
+    , tileX(0)
+    , tileY(0)
+    , rotation(0.0f)
+    {}
+};
+
 struct GameState {
-    Tile tiles[TilesCountY][TilesCountX];    
+    Tile tiles[TilesCountY][TilesCountX];
+    Player player;
 };
 
 @interface GameScene : CCLayer {
     GameState state;
     CCSprite* tileSprites[TilesCountY][TilesCountX];
+    CCNode* board;
+    CCSprite* playerSprite;
     CGSize screenSize;
+    bool movingUp;
+    bool movingDown;
+    bool movingLeft;
+    bool movingRight;
 }
 
 + (CCScene *) scene;
