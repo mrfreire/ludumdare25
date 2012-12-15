@@ -6,11 +6,9 @@
 //  Copyright __MyCompanyName__ 2012. All rights reserved.
 //
 
-
-// Import the interfaces
 #import "HelloWorldLayer.h"
+#import "Menu.h"
 
-// HelloWorldLayer implementation
 @implementation HelloWorldLayer
 
 +(CCScene *) scene
@@ -35,29 +33,36 @@
 	// Apple recommends to re-assign "self" with the "super" return value
 	if( (self=[super init]) ) {
 		
-		// create and initialize a Label
-		CCLabelTTF *label = [CCLabelTTF labelWithString:@"Ludum Dare" fontName:@"Marker Felt" fontSize:32];
-
-		// ask director for the window size
 		CGSize size = [[CCDirector sharedDirector] winSize];
-	
-		// position the label on the center of the screen
+
+        CCLabelTTF *label = [CCLabelTTF labelWithString:@"Splash" fontName:@"Marker Felt" fontSize:32];
 		label.position =  ccp( size.width /2 , size.height/2 );
-		
-		// add the label as a child to this Layer
 		[self addChild: label];
+        
+        keyPressed = NO;
+        
+        self.isKeyboardEnabled = YES;
+        
+        [self performSelector:@selector(goToNextScreen) withObject:nil afterDelay:2.0f];
 	}
 	return self;
 }
 
-// on "dealloc" you need to release all your retained objects
-- (void) dealloc
+- (void)goToNextScreen
 {
-	// in case you have something to dealloc, do it in this method
-	// in this particular example nothing needs to be released.
-	// cocos2d will automatically release all the children (Label)
-	
-	// don't forget to call "super dealloc"
-	[super dealloc];
+    if (!keyPressed) {
+        keyPressed = YES;
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:0.5 scene:[Menu scene]]];
+    }
 }
+
+- (BOOL)ccKeyUp:(NSEvent*)event
+{
+    if (!keyPressed) {
+        [self goToNextScreen];
+    }
+    return YES;
+}
+
+
 @end

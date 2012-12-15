@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "HelloWorldLayer.h"
+#import "GameScene.h"
 
 @implementation LudumDare25AppDelegate
 @synthesize window=window_, glView=glView_;
@@ -33,7 +34,7 @@
 	// Center main window
 	[window_ center];
 	
-	[director runWithScene:[HelloWorldLayer scene]];
+	[director runWithScene:[GameScene scene]];
 }
 
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) theApplication
