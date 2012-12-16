@@ -36,6 +36,10 @@ const int LightReach = 9;
 
 enum ItemTypes {
     Cash,
+    Light1,
+    Light2,
+    Light3,
+    Light4,
     
     ItemTypesCount
 };
@@ -180,11 +184,12 @@ struct GameState {
     CCSprite* enemySprites[MaxEnemyCount];
     CCSprite* itemSprites[MaxItemCount];
     CGSize screenSize;
+    
     bool movingUp;
     bool movingDown;
     bool movingLeft;
     bool movingRight;
-
+    
     int editorSelectedTile;
     int editorSelectedEnemy;
     bool editorItemPickEnabled;
@@ -205,6 +210,9 @@ struct GameState {
     CCLabelTTF* deactivationCountdownLabel;
     
     int itemsInInventory;
+    
+    bool hasKnife;
+    bool usingKnife;
 }
 
 + (CCScene*)sceneWithLevel:(int)level;

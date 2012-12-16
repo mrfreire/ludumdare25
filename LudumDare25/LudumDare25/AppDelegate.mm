@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "HelloWorldLayer.h"
+#import "SplashLayer.h"
 #import "GameScene.h"
 
 @implementation LudumDare25AppDelegate
@@ -34,7 +34,8 @@
 	// Center main window
 	[window_ center];
 	
-	[director runWithScene:[GameScene sceneWithLevel:0]];
+	//[director runWithScene:[GameScene sceneWithLevel:0]];
+    [director runWithScene:[SplashLayer sceneWithId:0]];
 }
 
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) theApplication

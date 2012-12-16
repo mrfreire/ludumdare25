@@ -101,6 +101,13 @@
         Item& item = state.items[i];
         item.collected = false;
     }
+    
+    // Reset lighting
+    for (int i=0; i<TilesCountY; ++i) {
+        for (int j=0; j<TilesCountX; ++j) {
+            state.tiles[i][j].light = 255;
+        }
+    }
 
     // Create sprites
     for (int i=0; i<TilesCountY; ++i) {
@@ -142,7 +149,16 @@
         
         board = [CCNode node];
 		
-        CCLabelTTF *label = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"LEVEL %d", level] fontName:@"Monaco" fontSize:20];
+        const char* levelTitles[] = {
+            "ACT 1: STEALTH",
+            "ACT 2: LIGHTS",
+            "ACT 3: DOORS",
+            "ACT 4: KILL",
+            "ACT 5: BERMUDA"
+        };
+        
+        hasKnife = (level == 4);
+        CCLabelTTF *label = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%s", levelTitles[level-1]] fontName:@"Monaco" fontSize:20];
         label.anchorPoint = ccp(0, 0);
 		label.position = ccp(20, 20);
 		[self addChild:label];
@@ -267,6 +283,56 @@
         }
     }
     
+    // Scene lights
+    for (int i=0; i<MaxItemCount; ++i) {
+        const Item& item = state.items[i];
+        if (item.active && item.type >= Light1 && item.type <= Light4 && item.collected == false) {  // active light
+            float direction;
+            if (item.type == Light1)
+                direction = East;
+            else if (item.type == Light2)
+                direction = North;
+            else if (item.type == Light3)
+                direction = West;
+            else
+                direction = South;
+            int tileX = item.tileX;
+            int tileY = item.tileY;
+            for (int light = LightReach; light>0; --light) {
+                state.tiles[tileY][tileX].light += light*LightQuant;
+                if (direction == East) {
+                    ++tileX;
+                    if (tileX >= TilesCountX || !TileIsWalkable[state.tiles[tileY][tileX].type]) {  // wall
+                        light -= LightAbsorption;
+                        direction = West;
+                        --tileX;
+                    }
+                } else if (direction == West) {
+                    --tileX;
+                    if (tileX < 0 || !TileIsWalkable[state.tiles[tileY][tileX].type]) {  // wall
+                        light -= LightAbsorption;
+                        direction = East;
+                        ++tileX;
+                    }
+                } else if (direction == North) {
+                    ++tileY;
+                    if (tileY >= TilesCountY || !TileIsWalkable[state.tiles[tileY][tileX].type]) {  // wall
+                        light -= LightAbsorption;
+                        direction = South;
+                        --tileY;
+                    }
+                } else {
+                    --tileY;
+                    if (tileY < 0 || !TileIsWalkable[state.tiles[tileY][tileX].type]) {  // wall
+                        light -= LightAbsorption;
+                        direction = North;
+                        ++tileY;
+                    }
+                }
+            }
+        }
+    }
+    
     for (int i=0; i<MaxEnemyCount; ++i) {
         const Enemy& enemy = state.enemies[i];
         if (enemy.active) {  // cast light
@@ -363,6 +429,30 @@
         if (movingLeft) {
             player.position = [self getCorrectedPositionForPosition:player.position dx:-dt*PlayerSpeed dy:0];
             player.rotation = 180;
+        }
+    }
+    
+    // Player attack
+    if (hasKnife && usingKnife) {
+        usingKnife = false;
+        for (int i=0; i<MaxEnemyCount; ++i) {
+            Enemy& enemy = state.enemies[i];
+            if (!enemy.active) {
+                continue;
+            }
+            if (enemy.tileY == player.tileY) {
+                if (enemy.tileX == player.tileX+1 && player.rotation == East) {
+                    enemy.active = false;
+                } else if (enemy.tileX == player.tileX-1 && player.rotation == West) {
+                    enemy.active = false;
+                }
+            } else if (enemy.tileX == player.tileX) {
+                if (enemy.tileY == player.tileY+1 && player.rotation == North) {
+                    enemy.active = false;
+                } else if (enemy.tileY == player.tileY-1 && player.rotation == South) {
+                    enemy.active = false;
+                }
+            }
         }
     }
     
@@ -569,7 +659,7 @@
     // Check item collection
     for (int i=0; i<MaxItemCount; ++i) {
         Item& item = state.items[i];
-        if (item.active && !item.collected) {
+        if (item.active && !item.collected && (item.type < Light1 || item.type > Light4)) {
             if (item.tileX == player.tileX && item.tileY == player.tileY) {  // collect item
                 item.collected = true;
                 itemSprites[i].position = ccp(20+(itemsInInventory%4)*ItemWidth+ItemWidth/2,
@@ -594,7 +684,9 @@
     }
     
     // Update lighting
-    [self updateLighting];
+    if (level == 2 || level == 4 || level == 5) {
+        [self updateLighting];
+    }
     
     // Update sprites
     playerSprite.position = player.position;
@@ -663,7 +755,11 @@
         state.tiles[y][x].type = Door;
     }
     [self setSpriteY:y X:x type:state.tiles[y][x].type];
+}
 
+- (void)toggleLight:(int)i
+{
+    state.items[i].collected = !state.items[i].collected;
 }
 
 - (int)mouseEdit:(NSEvent*)event item:(BOOL)isItem
@@ -755,12 +851,17 @@
 	}
     
     // Player actions
+    const Player& player = state.player;
+
+    if (keyCode == 107) {  // k
+        usingKnife = true;
+    }
+    
     if (keyCode == 32) {  // space
         deactivatePressed = false;
         deactivating = false;
-        
+
         // Open/close a normal door
-        const Player& player = state.player;
         if (player.rotation == East && player.tileX < TilesCountX-1) {  // check right
             int type = state.tiles[player.tileY][player.tileX+1].type;
             if (type == Door || type == OpenDoor) {
@@ -783,6 +884,16 @@
             int type = state.tiles[player.tileY-1][player.tileX].type;
             if (type == Door || type == OpenDoor) {
                 [self toggleDoorY:player.tileY-1 X:player.tileX];
+            }
+        }
+        
+        // Check light switch
+        for (int i=0; i<MaxItemCount; ++i) {
+            Item& item = state.items[i];
+            if (item.active && item.type >= Light1 && item.type <= Light4) {
+                if (item.tileX == player.tileX && item.tileY == player.tileY) {  // toggle light
+                    item.collected = !item.collected;
+                }
             }
         }
     }
@@ -853,14 +964,14 @@
             }
         }
     }
-    if (keyCode == 106) {  // j
+    if (keyCode == 104) {  // h
         Enemy& enemy = state.enemies[editorSelectedEnemy];
         if (enemy.active) {
             enemy.patrolTileA[0] = enemy.tileY;
             enemy.patrolTileA[1] = enemy.tileX;
         }
     }
-    if (keyCode == 107) {  // k
+    if (keyCode == 106) {  // j
         Enemy& enemy = state.enemies[editorSelectedEnemy];
         if (enemy.active) {
             enemy.patrolTileB[0] = enemy.tileY;
