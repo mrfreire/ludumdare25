@@ -38,6 +38,18 @@
     [board addChild:tileSprites[i][j]];
 }
 
+- (void)setItemSprite:(int)i Y:(int)y X:(int)x type:(int)type
+{
+    if (itemSprites[i]) {
+        [itemSprites[i] removeFromParentAndCleanup:YES];
+        [itemSprites[i] release];
+    }
+    itemSprites[i] = [[CCSprite alloc] initWithFile:[NSString stringWithFormat:@"Item%d.png", type]];
+    itemSprites[i].anchorPoint = ccp(0.5, 0.5);
+    itemSprites[i].position = [self centerOfTileY:y X:x];
+    [board addChild:itemSprites[i]];
+}
+
 - (CGPoint)centerOfTileY:(int)i X:(int)j
 {
     return CGPointMake(TilesStartX + j*TileWidth + TileWidth/2, TilesStartY + i*TileHeight + TileHeight/2);
@@ -76,7 +88,7 @@
         }
     }
     
-    // Reset characters
+    // Reset characters & items
     state.player.rotation = 0;
     state.player.position = [self centerOfTileY:state.player.tileY X:state.player.tileX];
     for (int i=0; i<MaxEnemyCount; ++i) {
@@ -85,6 +97,10 @@
         enemy.state = 0;
         enemy.substate = 2;
     }
+    for (int i=0; i<MaxItemCount; ++i) {
+        Item& item = state.items[i];
+        item.collected = false;
+    }
 
     // Create sprites
     for (int i=0; i<TilesCountY; ++i) {
@@ -92,7 +108,14 @@
             [self setSpriteY:i X:j type:state.tiles[i][j].type];
         }
     }
+ 
+    for (int i=0; i<MaxItemCount; ++i) {
+        const Item& item = state.items[i];
+        [self setItemSprite:i Y:item.tileY X:item.tileX type:item.type];
+        itemSprites[i].visible = NO;
+    }
     
+
     [self addChild:board];
     
     [playerSprite removeFromParentAndCleanup:YES];
@@ -107,7 +130,6 @@
         enemySprites[i].visible = state.enemies[i].active;
         [self addChild:enemySprites[i]];
     }
-
 }
 
 - (id)initWithLevel:(int)level_
@@ -244,23 +266,25 @@
         return;
     }
 
+    Player& player = state.player;
+    
     // Move player
     if (!deactivating) {
         if (movingDown) {
-            state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:0 dy:-dt*PlayerSpeed];
-            state.player.rotation = 90;
+            player.position = [self getCorrectedPositionForPosition:player.position dx:0 dy:-dt*PlayerSpeed];
+            player.rotation = 90;
         }
         if (movingUp) {
-            state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:0 dy:dt*PlayerSpeed];
-            state.player.rotation = 270;
+            player.position = [self getCorrectedPositionForPosition:player.position dx:0 dy:dt*PlayerSpeed];
+            player.rotation = 270;
         }
         if (movingRight) {
-            state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:dt*PlayerSpeed dy:0];
-            state.player.rotation = 0;
+            player.position = [self getCorrectedPositionForPosition:player.position dx:dt*PlayerSpeed dy:0];
+            player.rotation = 0;
         }
         if (movingLeft) {
-            state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:-dt*PlayerSpeed dy:0];
-            state.player.rotation = 180;
+            player.position = [self getCorrectedPositionForPosition:player.position dx:-dt*PlayerSpeed dy:0];
+            player.rotation = 180;
         }
     }
     
@@ -340,10 +364,10 @@
     }
     
     // Update tile where each character is
-    Tile* playerTile = [self tileContainingPosition:state.player.position];
+    Tile* playerTile = [self tileContainingPosition:player.position];
     assert(playerTile);
-    state.player.tileX = playerTile->x;
-    state.player.tileY = playerTile->y;
+    player.tileX = playerTile->x;
+    player.tileY = playerTile->y;
     for (int i=0; i<MaxEnemyCount; ++i) {
         Tile* enemyTile = [self tileContainingPosition:state.enemies[i].position];
         assert(enemyTile);
@@ -355,15 +379,15 @@
     for (int i=0; i<MaxEnemyCount; ++i) {
         Enemy& enemy = state.enemies[i];
         bool detected = false;
-        float diffX = fabsf(enemy.position.x - state.player.position.x);
-        float diffY = fabsf(enemy.position.y - state.player.position.y);
+        float diffX = fabsf(enemy.position.x - player.position.x);
+        float diffY = fabsf(enemy.position.y - player.position.y);
         if (diffX < TileWidth/(1+DetectionThreshold)) {
             if (enemy.rotation == 270) {  // facing up
                 for (int y=enemy.tileY; y<TilesCountY; ++y) {
                     if (!TileIsWalkable[state.tiles[y][enemy.tileX].type]) {
                         break;
                     }
-                    if (state.player.tileY == y) {
+                    if (player.tileY == y) {
                         detected = true;
                         break;
                     }
@@ -373,7 +397,7 @@
                     if (!TileIsWalkable[state.tiles[y][enemy.tileX].type]) {
                         break;
                     }
-                    if (state.player.tileY == y) {
+                    if (player.tileY == y) {
                         detected = true;
                         break;
                     }
@@ -386,7 +410,7 @@
                     if (!TileIsWalkable[state.tiles[enemy.tileY][x].type]) {
                         break;
                     }
-                    if (state.player.tileX == x) {
+                    if (player.tileX == x) {
                         detected = true;
                         break;
                     }
@@ -396,7 +420,7 @@
                     if (!TileIsWalkable[state.tiles[enemy.tileY][x].type]) {
                         break;
                     }
-                    if (state.player.tileX == x) {
+                    if (player.tileX == x) {
                         detected = true;
                         break;
                     }
@@ -428,7 +452,6 @@
     }
     
     if (deactivatePressed && !deactivating) {  // start deactivating
-        Player& player = state.player;
         if (player.tileX < TilesCountX-1) {  // check right
             if (state.tiles[player.tileY][player.tileX+1].type == Door) {
                 tileBeingDeactivated[0] = player.tileY;
@@ -463,6 +486,19 @@
         }
     }
     
+    // Check item collection
+    for (int i=0; i<MaxItemCount; ++i) {
+        Item& item = state.items[i];
+        if (item.active && !item.collected) {
+            if (item.tileX == player.tileX && item.tileY == player.tileY) {  // collect item
+                item.collected = true;
+                itemSprites[i].position = ccp(20+(itemsInInventory%4)*ItemWidth+ItemWidth/2,
+                                              screenSize.height-20-ItemHeight/2-(itemsInInventory/4)*ItemHeight);
+                ++itemsInInventory;
+            }
+        }
+    }
+
     // Check win
     if (playerTile->type == Exit) {
         bool allCollected = true;
@@ -478,13 +514,17 @@
     }
     
     // Update sprites
-    playerSprite.position = state.player.position;
-    playerSprite.rotation = state.player.rotation;
+    playerSprite.position = player.position;
+    playerSprite.rotation = player.rotation;
     for (int i=0; i<MaxEnemyCount; ++i) {
         const Enemy& enemy = state.enemies[i];
         enemySprites[i].visible = enemy.active;
         enemySprites[i].position = enemy.position;
         enemySprites[i].rotation = enemy.rotation;
+    }
+    for (int i=0; i<MaxItemCount; ++i) {
+        const Item& item = state.items[i];
+        itemSprites[i].visible = item.active;
     }
 }
 
@@ -498,26 +538,67 @@
     [self setSpriteY:tileY X:tileX type:state.tiles[tileY][tileX].type];
 }
 
-- (int)mouseEdit:(NSEvent*)event
+- (void)clickedOnItemY:(int)tileY X:(int)tileX
+{
+    int i;
+    for (i=0; i<MaxItemCount; ++i) {
+        const Item& item = state.items[i];
+        if (item.active && item.tileY == tileY && item.tileX == tileX) {
+            break;
+        }
+    }
+    
+    if (i == MaxItemCount) {  // no item exists, create it
+        for (i=0; i<MaxItemCount; ++i) {
+            if (!state.items[i].active) {
+                break;
+            }
+        }
+        if (i < MaxItemCount) {
+            state.items[i].active = true;
+            state.items[i].collected = false;
+            state.items[i].mustBeCollected = true;
+            state.items[i].type = -1;
+            state.items[i].tileY = tileY;
+            state.items[i].tileX = tileX;
+        }
+    }
+    
+    if (i < MaxItemCount) {  // cycle through type
+        ++state.items[i].type;
+        if (state.items[i].type >= ItemTypesCount) {
+            state.items[i].type = 0;
+            state.items[i].active = false;
+        } else {
+            [self setItemSprite:i Y:tileY X:tileX type:state.items[i].type];
+        }
+    }
+}
+
+- (int)mouseEdit:(NSEvent*)event item:(BOOL)isItem
 {
     CGPoint clickedAt = [(CCDirectorMac*)[CCDirector sharedDirector] convertEventToGL:event];
     
     Tile* tile = [self tileContainingPosition:clickedAt];
     if (tile) {
-        [self clickedOnTileY:tile->y X:tile->x];
+        if (isItem) {
+            [self clickedOnItemY:tile->y X:tile->x];
+        } else {
+            [self clickedOnTileY:tile->y X:tile->x];
+        }
     }
 	return YES;
 }
 
 - (BOOL)ccMouseDragged:(NSEvent*)event
 {
-    return [self mouseEdit:event];
+    return [self mouseEdit:event item:editorItemPickEnabled];
     //return YES;
 }
 
 - (BOOL)ccMouseDown:(NSEvent*)event
 {
-    return [self mouseEdit:event];
+    return [self mouseEdit:event item:editorItemPickEnabled];
 }
 
 - (BOOL)ccKeyDown:(NSEvent*)event
@@ -606,6 +687,9 @@
         } else {
             assert(0);
         }
+    }
+    if (keyCode == 105) {  // i
+        editorItemPickEnabled = !editorItemPickEnabled;
     }
     if (keyCode == 44) {  // ,
         if (level > 0) {

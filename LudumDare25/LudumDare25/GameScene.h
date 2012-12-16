@@ -26,6 +26,14 @@ const float EnemyWalkSpeed = 40.0f;
 const float EnemyRunSpeed = 150.0f;
 const float EnemyWaitDuration = 4.0f;
 const float DetectionThreshold = 0.3f;  // proportion that can be seen before being detected
+const int ItemWidth = 20;
+const int ItemHeight = 40;
+
+enum ItemTypes {
+    Cash,
+    
+    ItemTypesCount
+};
 
 enum TileTypes {
     Floor = 0,
@@ -154,17 +162,21 @@ struct GameState {
     CCNode* board;
     CCSprite* playerSprite;
     CCSprite* enemySprites[MaxEnemyCount];
+    CCSprite* itemSprites[MaxItemCount];
     CGSize screenSize;
     bool movingUp;
     bool movingDown;
     bool movingLeft;
     bool movingRight;
+
     int editorSelectedTile;
     int editorSelectedEnemy;
+    bool editorItemPickEnabled;
     bool editorMovingUp;
     bool editorMovingDown;
     bool editorMovingLeft;
     bool editorMovingRight;
+    
     bool finished;
     bool lost;
     int detectedBy;
@@ -175,6 +187,8 @@ struct GameState {
     int tileBeingDeactivated[2];
     CCLayer* deactivatingLayer;
     CCLabelTTF* deactivationCountdownLabel;
+    
+    int itemsInInventory;
 }
 
 + (CCScene*)sceneWithLevel:(int)level;
