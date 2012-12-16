@@ -200,6 +200,11 @@
     [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:0.5 scene:[GameScene sceneWithLevel:level]]];
 }
 
+- (void)advanceLevel
+{
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:0.5 scene:[GameScene sceneWithLevel:level+1]]];
+}
+
 - (void)lose
 {
     finished = true;
@@ -216,6 +221,21 @@
     [self performSelector:@selector(restartLevel) withObject:nil afterDelay:2.0f];
 }
 
+- (void)win
+{
+    finished = true;
+    lost = true;
+    
+    deactivatingLayer.visible = NO;
+    
+    CCLayerColor* overlay = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 160)];
+    [self addChild:overlay];
+    CCLabelTTF* label = [CCLabelTTF labelWithString:@"YOU MADE IT!" fontName:@"Monaco" fontSize:30];
+    label.position = ccp(screenSize.width/2, screenSize.height/2);
+    [self addChild:label];
+    
+    [self performSelector:@selector(advanceLevel) withObject:nil afterDelay:2.0f];
+}
 - (void)update:(ccTime)dt
 {
     if (finished) {
@@ -440,6 +460,20 @@
 
         if (deactivating) {
             deactivateStartTime = CFAbsoluteTimeGetCurrent();
+        }
+    }
+    
+    // Check win
+    if (playerTile->type == Exit) {
+        bool allCollected = true;
+        for (int i=0; i<MaxItemCount; ++i) {
+            const Item& item = state.items[i];
+            if (item.mustBeCollected && !item.collected) {
+                allCollected = false;
+            }
+        }
+        if (allCollected) {
+            [self win];
         }
     }
     

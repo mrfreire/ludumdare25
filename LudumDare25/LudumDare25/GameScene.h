@@ -20,6 +20,7 @@ const int TilesStartY = (720-TilesTotalHeight)/2;
 const int TilesEndX = TilesStartX + TilesTotalWidth;
 const int TilesEndY = TilesStartY + TilesTotalHeight;
 const int MaxEnemyCount = 32;
+const int MaxItemCount = 32;
 const float PlayerSpeed = 150.0f;
 const float EnemyWalkSpeed = 40.0f;
 const float EnemyRunSpeed = 150.0f;
@@ -113,11 +114,32 @@ struct Enemy : Player {
     }
 };
 
+struct Item {
+    int type;
+    int tileX;
+    int tileY;
+    bool collected;
+    bool mustBeCollected;
+    bool active;
+    bool _pad1;
+    
+    Item()
+    : type(0)
+    , tileX(0)
+    , tileY(0)
+    , collected(false)
+    , mustBeCollected(false)
+    , active(false)
+    , _pad1(false)
+    {}        
+};
+
 struct GameState {
     Tile tiles[TilesCountY][TilesCountX];
     Player player;
     Enemy enemies[MaxEnemyCount];
-    bool _padding[2000];
+    Item items[MaxItemCount];
+    bool _padding[2000-MaxItemCount*sizeof(Item)];
     
     GameState()
     {
