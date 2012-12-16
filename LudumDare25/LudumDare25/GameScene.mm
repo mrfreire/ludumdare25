@@ -258,6 +258,84 @@
     
     [self performSelector:@selector(advanceLevel) withObject:nil afterDelay:2.0f];
 }
+
+- (void)updateLighting
+{
+    for (int i=0; i<TilesCountY; ++i) {
+        for (int j=0; j<TilesCountX; ++j) {
+            state.tiles[i][j].light = AmbientLight;
+        }
+    }
+    
+    for (int i=0; i<MaxEnemyCount; ++i) {
+        const Enemy& enemy = state.enemies[i];
+        if (enemy.active) {  // cast light
+            float direction = enemy.rotation;
+            int tileX = enemy.tileX;
+            int tileY = enemy.tileY;
+            CGPoint tilePosition = [self centerOfTileY:tileY X:tileX];
+            float offsetFromTileCenterX = (enemy.position.x - (tilePosition.x - TileWidth/2)) / TileWidth;
+            float offsetFromTileCenterY = (enemy.position.y - (tilePosition.y - TileWidth/2)) / TileWidth;
+            float lightOffset;
+            if (direction == East) {
+                lightOffset = offsetFromTileCenterX;
+            } else if (direction == West) {
+                lightOffset = 1-offsetFromTileCenterX;
+            } else if (direction == North) {
+                lightOffset = offsetFromTileCenterY;
+            } else {
+                lightOffset = 1-offsetFromTileCenterY;
+            }
+            for (int light = 14; light>0; --light) {
+                if (light == 14)
+                    state.tiles[tileY][tileX].light += light*LightQuant*(1-lightOffset);
+                else
+                    state.tiles[tileY][tileX].light += light*LightQuant+lightOffset*LightQuant;
+                if (direction == East) {
+                    ++tileX;
+                    if (tileX >= TilesCountX || !TileIsWalkable[state.tiles[tileY][tileX].type]) {  // wall
+                        light -= LightAbsorption;
+                        direction = West;
+                        --tileX;
+                    }
+                } else if (direction == West) {
+                    --tileX;
+                    if (tileX < 0 || !TileIsWalkable[state.tiles[tileY][tileX].type]) {  // wall
+                        light -= LightAbsorption;
+                        direction = East;
+                        ++tileX;
+                    }
+                } else if (direction == North) {
+                    ++tileY;
+                    if (tileY >= TilesCountY || !TileIsWalkable[state.tiles[tileY][tileX].type]) {  // wall
+                        light -= LightAbsorption;
+                        direction = South;
+                        --tileY;
+                    }
+                } else {
+                    --tileY;
+                    if (tileY < 0 || !TileIsWalkable[state.tiles[tileY][tileX].type]) {  // wall
+                        light -= LightAbsorption;
+                        direction = North;
+                        ++tileY;
+                    }
+                }
+            }
+        }
+    }
+    
+    for (int i=0; i<TilesCountY; ++i) {
+        for (int j=0; j<TilesCountX; ++j) {
+            int light = min(state.tiles[i][j].light, 255);
+            if (light == AmbientLight) {
+                tileSprites[i][j].color = ccc3(light*0.8, light*0.8, light);
+            } else {
+                tileSprites[i][j].color = ccc3(light, light, light);
+            }
+        }
+    }
+}
+
 - (void)update:(ccTime)dt
 {
     if (finished) {
@@ -437,13 +515,13 @@
     if (deactivating) {  // update deactivation
         Tile& tile = state.tiles[tileBeingDeactivated[0]][tileBeingDeactivated[1]];
         float elapsed = CFAbsoluteTimeGetCurrent() - deactivateStartTime;
-        if (elapsed >= tile.strength) {  // open!
+        if (elapsed >= DoorOpeningTime) {  // open!
             deactivating = false;
             tile.type = Vault;
             [self setSpriteY:tile.y X:tile.x type:tile.type];
             deactivatingLayer.visible = NO;
         } else {
-            int secsToGo = ceilf(tile.strength - elapsed);
+            int secsToGo = ceilf(DoorOpeningTime - elapsed);
             [deactivationCountdownLabel setString:[NSString stringWithFormat:@"OPENING TIME: 00:%02d", secsToGo]];
             deactivatingLayer.visible = YES;
         }
@@ -513,6 +591,9 @@
         }
     }
     
+    // Update lighting
+    [self updateLighting];
+    
     // Update sprites
     playerSprite.position = player.position;
     playerSprite.rotation = player.rotation;
@@ -532,9 +613,6 @@
 {
     NSLog(@"clicked on tile %d, %d", tileY, tileX);
     state.tiles[tileY][tileX].type = editorSelectedTile;
-    if (editorSelectedTile == Door) {
-        state.tiles[tileY][tileX].strength = 5;
-    }
     [self setSpriteY:tileY X:tileX type:state.tiles[tileY][tileX].type];
 }
 

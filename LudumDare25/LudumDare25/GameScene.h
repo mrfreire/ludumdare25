@@ -28,6 +28,10 @@ const float EnemyWaitDuration = 4.0f;
 const float DetectionThreshold = 0.3f;  // proportion that can be seen before being detected
 const int ItemWidth = 20;
 const int ItemHeight = 40;
+const int DoorOpeningTime = 5;
+const int AmbientLight = 100;
+const int LightQuant = 10;
+const int LightAbsorption = 15;
 
 enum ItemTypes {
     Cash,
@@ -45,6 +49,13 @@ enum TileTypes {
     TileTypesCount
 };
 
+enum Direction {
+    North = 270,
+    South = 90,
+    East = 0,
+    West = 180
+};
+
 const bool TileIsWalkable[TileTypesCount] = {
     true,
     false,
@@ -55,12 +66,12 @@ const bool TileIsWalkable[TileTypesCount] = {
 
 struct Tile {
     int x, y;
-    int strength;
+    int light;
     int type;
     bool isExit;
     
     Tile()
-    : strength(1)
+    : light(0)
     , isExit(false)
     {}
 };
