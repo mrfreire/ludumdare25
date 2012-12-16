@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		64202166167E00010027E2D0 /* Item0.png in Resources */ = {isa = PBXBuildFile; fileRef = 64202165167E00010027E2D0 /* Item0.png */; };
+		6420216A167E22F70027E2D0 /* Tile5.png in Resources */ = {isa = PBXBuildFile; fileRef = 64202168167E22F70027E2D0 /* Tile5.png */; };
+		6420216B167E22F70027E2D0 /* Tile6.png in Resources */ = {isa = PBXBuildFile; fileRef = 64202169167E22F70027E2D0 /* Tile6.png */; };
 		645C173C167C9DB9008F0644 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 645C173B167C9DB9008F0644 /* QuartzCore.framework */; };
 		645C173E167C9DB9008F0644 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 645C173D167C9DB9008F0644 /* OpenGL.framework */; };
 		645C1740167C9DB9008F0644 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 645C173F167C9DB9008F0644 /* OpenAL.framework */; };
@@ -137,6 +139,8 @@
 
 /* Begin PBXFileReference section */
 		64202165167E00010027E2D0 /* Item0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Item0.png; path = Resources/Item0.png; sourceTree = "<group>"; };
+		64202168167E22F70027E2D0 /* Tile5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Tile5.png; path = Resources/Tile5.png; sourceTree = "<group>"; };
+		64202169167E22F70027E2D0 /* Tile6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Tile6.png; path = Resources/Tile6.png; sourceTree = "<group>"; };
 		645C1737167C9DB9008F0644 /* LudumDare25.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LudumDare25.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		645C173B167C9DB9008F0644 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		645C173D167C9DB9008F0644 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -471,6 +475,8 @@
 		645C1748167C9DB9008F0644 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				64202168167E22F70027E2D0 /* Tile5.png */,
+				64202169167E22F70027E2D0 /* Tile6.png */,
 				64202165167E00010027E2D0 /* Item0.png */,
 				645C18E1167D1BDC008F0644 /* Enemy.png */,
 				645C18D3167CEF75008F0644 /* Tile2.png */,
@@ -915,6 +921,8 @@
 				645C18D8167CEF75008F0644 /* Tile4.png in Resources */,
 				645C18E2167D1BDC008F0644 /* Enemy.png in Resources */,
 				64202166167E00010027E2D0 /* Item0.png in Resources */,
+				6420216A167E22F70027E2D0 /* Tile5.png in Resources */,
+				6420216B167E22F70027E2D0 /* Tile6.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

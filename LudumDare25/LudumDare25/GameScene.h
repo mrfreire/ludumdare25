@@ -30,8 +30,9 @@ const int ItemWidth = 20;
 const int ItemHeight = 40;
 const int DoorOpeningTime = 5;
 const int AmbientLight = 100;
-const int LightQuant = 10;
-const int LightAbsorption = 15;
+const int LightQuant = 15;
+const int LightAbsorption = 8;
+const int LightReach = 9;
 
 enum ItemTypes {
     Cash,
@@ -43,8 +44,10 @@ enum TileTypes {
     Floor = 0,
     Wall,
     Vault,
-    Door,
+    VaultDoor,
     Exit,
+    Door,
+    OpenDoor,
     
     TileTypesCount
 };
@@ -57,6 +60,8 @@ enum Direction {
 };
 
 const bool TileIsWalkable[TileTypesCount] = {
+    true,
+    false,
     true,
     false,
     true,

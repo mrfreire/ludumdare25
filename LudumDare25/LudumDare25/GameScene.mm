@@ -286,8 +286,8 @@
             } else {
                 lightOffset = 1-offsetFromTileCenterY;
             }
-            for (int light = 14; light>0; --light) {
-                if (light == 14)
+            for (int light = LightReach; light>0; --light) {
+                if (light == LightReach)
                     state.tiles[tileY][tileX].light += light*LightQuant*(1-lightOffset);
                 else
                     state.tiles[tileY][tileX].light += light*LightQuant+lightOffset*LightQuant;
@@ -465,7 +465,7 @@
                     if (!TileIsWalkable[state.tiles[y][enemy.tileX].type]) {
                         break;
                     }
-                    if (player.tileY == y) {
+                    if (player.tileY == y && state.tiles[y][enemy.tileX].light != AmbientLight) {
                         detected = true;
                         break;
                     }
@@ -475,7 +475,7 @@
                     if (!TileIsWalkable[state.tiles[y][enemy.tileX].type]) {
                         break;
                     }
-                    if (player.tileY == y) {
+                    if (player.tileY == y && state.tiles[y][enemy.tileX].light != AmbientLight) {
                         detected = true;
                         break;
                     }
@@ -488,7 +488,7 @@
                     if (!TileIsWalkable[state.tiles[enemy.tileY][x].type]) {
                         break;
                     }
-                    if (player.tileX == x) {
+                    if (player.tileX == x && state.tiles[enemy.tileY][x].light != AmbientLight) {
                         detected = true;
                         break;
                     }
@@ -498,7 +498,7 @@
                     if (!TileIsWalkable[state.tiles[enemy.tileY][x].type]) {
                         break;
                     }
-                    if (player.tileX == x) {
+                    if (player.tileX == x && state.tiles[enemy.tileY][x].light != AmbientLight) {
                         detected = true;
                         break;
                     }
@@ -512,7 +512,8 @@
         }
     }
     
-    if (deactivating) {  // update deactivation
+    // Update vault opening
+    if (deactivating) {
         Tile& tile = state.tiles[tileBeingDeactivated[0]][tileBeingDeactivated[1]];
         float elapsed = CFAbsoluteTimeGetCurrent() - deactivateStartTime;
         if (elapsed >= DoorOpeningTime) {  // open!
@@ -529,30 +530,31 @@
         deactivatingLayer.visible = NO;
     }
     
-    if (deactivatePressed && !deactivating) {  // start deactivating
+    // Start opening vault door
+    if (deactivatePressed && !deactivating) {
         if (player.tileX < TilesCountX-1) {  // check right
-            if (state.tiles[player.tileY][player.tileX+1].type == Door) {
+            if (state.tiles[player.tileY][player.tileX+1].type == VaultDoor) {
                 tileBeingDeactivated[0] = player.tileY;
                 tileBeingDeactivated[1] = player.tileX+1;
                 deactivating = true;
             }
         }
         if (player.tileX > 0) {  // check left
-            if (state.tiles[player.tileY][player.tileX-1].type == Door) {
+            if (state.tiles[player.tileY][player.tileX-1].type == VaultDoor) {
                 tileBeingDeactivated[0] = player.tileY;
                 tileBeingDeactivated[1] = player.tileX-1;
                 deactivating = true;
             }
         }
         if (player.tileY < TilesCountY-1) {  // check up
-            if (state.tiles[player.tileY+1][player.tileX].type == Door) {
+            if (state.tiles[player.tileY+1][player.tileX].type == VaultDoor) {
                 tileBeingDeactivated[0] = player.tileY+1;
                 tileBeingDeactivated[1] = player.tileX;
                 deactivating = true;
             }
         }
         if (player.tileY > 0) {  // check down
-            if (state.tiles[player.tileY-1][player.tileX].type == Door) {
+            if (state.tiles[player.tileY-1][player.tileX].type == VaultDoor) {
                 tileBeingDeactivated[0] = player.tileY-1;
                 tileBeingDeactivated[1] = player.tileX;
                 deactivating = true;
@@ -653,6 +655,17 @@
     }
 }
 
+- (void)toggleDoorY:(int)y X:(int)x
+{
+    if (state.tiles[y][x].type == Door) {
+        state.tiles[y][x].type = OpenDoor;
+    } else if (state.tiles[y][x].type == OpenDoor) {
+        state.tiles[y][x].type = Door;
+    }
+    [self setSpriteY:y X:x type:state.tiles[y][x].type];
+
+}
+
 - (int)mouseEdit:(NSEvent*)event item:(BOOL)isItem
 {
     CGPoint clickedAt = [(CCDirectorMac*)[CCDirector sharedDirector] convertEventToGL:event];
@@ -745,6 +758,33 @@
     if (keyCode == 32) {  // space
         deactivatePressed = false;
         deactivating = false;
+        
+        // Open/close a normal door
+        const Player& player = state.player;
+        if (player.rotation == East && player.tileX < TilesCountX-1) {  // check right
+            int type = state.tiles[player.tileY][player.tileX+1].type;
+            if (type == Door || type == OpenDoor) {
+                [self toggleDoorY:player.tileY X:player.tileX+1];
+            }
+        }
+        if (player.rotation == West && player.tileX > 0) {  // check left
+            int type = state.tiles[player.tileY][player.tileX-1].type;
+            if (type == Door || type == OpenDoor) {
+                [self toggleDoorY:player.tileY X:player.tileX-1];
+            }
+        }
+        if (player.rotation == North && player.tileY < TilesCountY-1) {  // check up
+            int type = state.tiles[player.tileY+1][player.tileX].type;
+            if (type == Door || type == OpenDoor) {
+                [self toggleDoorY:player.tileY+1 X:player.tileX];
+            }
+        }
+        if (player.rotation == South && player.tileY > 0) {  // check down
+            int type = state.tiles[player.tileY-1][player.tileX].type;
+            if (type == Door || type == OpenDoor) {
+                [self toggleDoorY:player.tileY-1 X:player.tileX];
+            }
+        }
     }
 
     // Editor
@@ -811,6 +851,20 @@
                 state.enemies[i].active = false;
                 break;
             }
+        }
+    }
+    if (keyCode == 106) {  // j
+        Enemy& enemy = state.enemies[editorSelectedEnemy];
+        if (enemy.active) {
+            enemy.patrolTileA[0] = enemy.tileY;
+            enemy.patrolTileA[1] = enemy.tileX;
+        }
+    }
+    if (keyCode == 107) {  // k
+        Enemy& enemy = state.enemies[editorSelectedEnemy];
+        if (enemy.active) {
+            enemy.patrolTileB[0] = enemy.tileY;
+            enemy.patrolTileB[1] = enemy.tileX;
         }
     }
     

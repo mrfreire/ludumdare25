@@ -34,20 +34,7 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "LudumDare25/GameScene.mm"
-         timestampString = "377361440.364359"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "622"
-         endingLineNumber = "622"
-         landmarkName = "-clickedOnItemY:X:"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "LudumDare25/GameScene.mm"
-         timestampString = "377361440.364359"
+         timestampString = "377365243.581293"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "624"
@@ -60,11 +47,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "LudumDare25/GameScene.mm"
-         timestampString = "377361440.364359"
+         timestampString = "377365243.581293"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "629"
-         endingLineNumber = "629"
+         startingLineNumber = "626"
+         endingLineNumber = "626"
          landmarkName = "-clickedOnItemY:X:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -73,11 +60,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "LudumDare25/GameScene.mm"
-         timestampString = "377361440.364359"
+         timestampString = "377365243.581293"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "621"
-         endingLineNumber = "621"
+         startingLineNumber = "631"
+         endingLineNumber = "631"
          landmarkName = "-clickedOnItemY:X:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -86,12 +73,64 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "LudumDare25/GameScene.mm"
-         timestampString = "377361440.364359"
+         timestampString = "377365243.581293"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "625"
-         endingLineNumber = "625"
+         startingLineNumber = "623"
+         endingLineNumber = "623"
          landmarkName = "-clickedOnItemY:X:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "LudumDare25/GameScene.mm"
+         timestampString = "377365243.581293"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "627"
+         endingLineNumber = "627"
+         landmarkName = "-clickedOnItemY:X:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "LudumDare25/GameScene.mm"
+         timestampString = "377365627.303514"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "341"
+         endingLineNumber = "341"
+         landmarkName = "-update:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "LudumDare25/GameScene.mm"
+         timestampString = "377366105.880769"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "533"
+         endingLineNumber = "533"
+         landmarkName = "-update:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "LudumDare25/GameScene.mm"
+         timestampString = "377368077.025082"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "570"
+         endingLineNumber = "570"
+         landmarkName = "-update:"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>
