@@ -76,13 +76,19 @@
         }
     }
     
-    // Reset character
+    // Reset characters
     state.player.rotation = 0;
     state.player.position = [self centerOfTileY:state.player.tileY X:state.player.tileX];
+    for (int i=0; i<MaxEnemyCount; ++i) {
+        Enemy& enemy = state.enemies[i];
+        enemy.position = [self centerOfTileY:enemy.patrolTileA[0] X:enemy.patrolTileA[1]];
+        enemy.state = 0;
+        enemy.substate = 2;
+    }
 
     // Create sprites
     for (int i=0; i<TilesCountY; ++i) {
-        for (int j=0; j<TilesCountY; ++j) {
+        for (int j=0; j<TilesCountX; ++j) {
             [self setSpriteY:i X:j type:state.tiles[i][j].type];
         }
     }
@@ -93,8 +99,15 @@
     [playerSprite release];
     playerSprite = [[CCSprite alloc] initWithFile:@"Player.png"];
     playerSprite.position = state.player.position;
-
     [self addChild:playerSprite];
+
+    for (int i=0; i<MaxEnemyCount; ++i) {
+        enemySprites[i] = [[CCSprite alloc] initWithFile:@"Enemy.png"];
+        enemySprites[i].position = state.enemies[i].position;
+        enemySprites[i].visible = state.enemies[i].active;
+        [self addChild:enemySprites[i]];
+    }
+
 }
 
 - (id)initWithLevel:(int)level_
@@ -127,15 +140,19 @@
 - (CGPoint)getCorrectedPositionForPosition:(CGPoint)originalPos dx:(float)dx dy:(float)dy
 {
     Tile* originalTile = [self tileContainingPosition:originalPos];
-    assert(originalTile && TileIsWalkable[originalTile->type]);
+    assert(originalTile);
+    /*if (!TileIsWalkable[originalTile->type]) {
+        return originalPos;
+    }*/
+    
     CGPoint originalTilePos = [self centerOfTileY:originalTile->y X:originalTile->x];
 
     CGPoint newPos = originalPos;
     newPos.x += dx;
     newPos.y += dy;
     
-    const float hw = TileWidth/2-1;
-    const float hh = TileHeight/2-1;
+    const float hw = TileWidth/2-2;
+    const float hh = TileHeight/2-2;
     Tile* tileTopLeft = [self tileContainingPosition:CGPointMake(newPos.x-hw, newPos.y+hh)];
     Tile* tileTopRight = [self tileContainingPosition:CGPointMake(newPos.x+hw, newPos.y+hh)];
     Tile* tileBottomLeft = [self tileContainingPosition:CGPointMake(newPos.x-hw, newPos.y-hh)];
@@ -171,33 +188,17 @@
     if (finished) {
         [self unscheduleAllSelectors];
         [[CCEventDispatcher sharedDispatcher] removeAllMouseDelegates];
-    }
-    
-    Tile* playerTile = [self tileContainingPosition:state.player.position];
-
-    /*static Tile* oldTile = playerTile;
-    if (playerTile != oldTile) {
-        if (playerTile)
-            NSLog(@"Player in tile (%d, %d)", playerTile->y, playerTile->x);
-        else
-            NSLog(@"ERROR: No tile");
-    }
-    oldTile = playerTile;*/
-    
-    if (playerTile) {
-        state.player.tileX = playerTile->x;
-        state.player.tileY = playerTile->y;
-    } else {
-        assert(0);
+        return;
     }
 
+    // Move player
     if (movingDown) {
-        state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:0 dy:dt*PlayerSpeed];
-        state.player.rotation = 270;
-    }
-    if (movingUp) {
         state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:0 dy:-dt*PlayerSpeed];
         state.player.rotation = 90;
+    }
+    if (movingUp) {
+        state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:0 dy:dt*PlayerSpeed];
+        state.player.rotation = 270;
     }
     if (movingRight) {
         state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:dt*PlayerSpeed dy:0];
@@ -207,9 +208,118 @@
         state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:-dt*PlayerSpeed dy:0];
         state.player.rotation = 180;
     }
+    
+    // Move enemy (editor)
+    Enemy& selectedEnemy = state.enemies[editorSelectedEnemy];
+    if (selectedEnemy.active) {
+        if (editorMovingDown) {
+            selectedEnemy.position = [self getCorrectedPositionForPosition:selectedEnemy.position dx:0 dy:-dt*EnemyRunSpeed];
+            selectedEnemy.rotation = 90;
+        }
+        if (editorMovingUp) {
+            selectedEnemy.position = [self getCorrectedPositionForPosition:selectedEnemy.position dx:0 dy:dt*EnemyRunSpeed];
+            selectedEnemy.rotation = 270;
+        }
+        if (editorMovingRight) {
+            selectedEnemy.position = [self getCorrectedPositionForPosition:selectedEnemy.position dx:dt*EnemyRunSpeed dy:0];
+            selectedEnemy.rotation = 0;
+        }
+        if (editorMovingLeft) {
+            selectedEnemy.position = [self getCorrectedPositionForPosition:selectedEnemy.position dx:-dt*EnemyRunSpeed dy:0];
+            selectedEnemy.rotation = 180;
+        }
+    }
+    
+    // Update AI
+    for (int i=0; i<MaxEnemyCount; ++i) {
+        Enemy& enemy = state.enemies[i];
+        if (!enemy.active) {
+            continue;
+        }
+        if (enemy.state == 0) {  // patrolling
+            if (enemy.substate == 0 || enemy.substate == 2) {  // walking
+                int* patrolTile = enemy.substate == 0 ? enemy.patrolTileB : enemy.patrolTileA;
+                CGPoint dest = [self centerOfTileY:patrolTile[0] X:patrolTile[1]];
+                if (enemy.position.y < dest.y) {
+                    enemy.position = [self getCorrectedPositionForPosition:enemy.position dx:0 dy:EnemyWalkSpeed*dt];
+                    if (enemy.position.y > dest.y) {
+                        enemy.position.y = dest.y;
+                    }
+                    enemy.rotation = 270;
+                } else if (enemy.position.y > dest.y) {
+                    enemy.position = [self getCorrectedPositionForPosition:enemy.position dx:0 dy:-EnemyWalkSpeed*dt];
+                    if (enemy.position.y < dest.y) {
+                        enemy.position.y = dest.y;
+                    }
+                    enemy.rotation = 90;
+                }
+                if (enemy.position.x < dest.x) {
+                    enemy.position = [self getCorrectedPositionForPosition:enemy.position dx:EnemyWalkSpeed*dt dy:0];
+                    if (enemy.position.x > dest.x) {
+                        enemy.position.x = dest.x;
+                    }
+                    enemy.rotation = 0;
+                } else if (enemy.position.x > dest.x) {
+                    enemy.position = [self getCorrectedPositionForPosition:enemy.position dx:-EnemyWalkSpeed*dt dy:0];
+                    if (enemy.position.x < dest.x) {
+                        enemy.position.x = dest.x;
+                    }
+                    enemy.rotation = 180;
+                }
+                
+                if (enemy.position.x == dest.x && enemy.position.y == dest.y) {
+                    enemy.substate = enemy.substate == 0 ? 1 : 3;
+                    enemy.stateParams[0] = CFAbsoluteTimeGetCurrent();
+                }
+            } else if (enemy.substate == 1 || enemy.substate == 3) {  // waiting
+                int phase = (CFAbsoluteTimeGetCurrent() - enemy.stateParams[0]) / EnemyWaitDuration * 4;
+                if (phase >= 4) {
+                    enemy.substate = enemy.substate == 1 ? 2 : 0;
+                } else {
+                    assert(phase >= 0);
+                    int* patrolRotation = enemy.substate == 1 ? enemy.patrolRotationB : enemy.patrolRotationA;
+                    enemy.rotation = patrolRotation[phase];
+                }
+            }
+        }
+    }
+    
+    // Move enemies
+    /*for (int i=0; i<MaxEnemyCount; ++i) {
+        Enemy& enemy = state.enemies[i];
+        enemy.position = [self getCorrectedPositionForPosition:enemy.position dx:enemy.dx*dt dy:enemy.dy*dt];
+        if (enemy.dx > 0) {
+            enemy.rotation = 0;
+        } else if (enemy.dx < 0) {
+            enemy.rotation = 180;
+        } else if (enemy.dy > 0) {
+            enemy.rotation = 90;
+        } else if (enemy.dy < 0) {
+            enemy.rotation = 270;
+        }
+    }*/
 
+    // Update tile where each character is
+    Tile* playerTile = [self tileContainingPosition:state.player.position];
+    assert(playerTile);
+    state.player.tileX = playerTile->x;
+    state.player.tileY = playerTile->y;
+    for (int i=0; i<MaxEnemyCount; ++i) {
+        Tile* enemyTile = [self tileContainingPosition:state.enemies[i].position];
+        assert(enemyTile);
+        state.enemies[i].tileX = enemyTile->x;
+        state.enemies[i].tileY = enemyTile->y;
+    }
+
+    // Update sprites
     playerSprite.position = state.player.position;
     playerSprite.rotation = state.player.rotation;
+    for (int i=0; i<MaxEnemyCount; ++i) {
+        const Enemy& enemy = state.enemies[i];
+        enemySprites[i].visible = enemy.active;
+        enemySprites[i].position = enemy.position;
+        enemySprites[i].rotation = enemy.rotation;
+    }
 }
 
 - (void)clickedOnTileY:(int)tileY X:(int)tileX
@@ -247,9 +357,9 @@
     unichar keyCode = [character characterAtIndex:0];
     
 	// Player movement
-	if (keyCode == 115) {
+	if (keyCode == 119) {
 		movingUp = true;
-	} else if (keyCode == 119) {
+	} else if (keyCode == 115) {
 		movingDown = true;
 	}
 	if (keyCode == 97) {
@@ -265,6 +375,18 @@
             editorSelectedTile = type;
         }
     }
+    if (keyCode == 63234) {  // left
+        editorMovingLeft = true;
+    }
+    if (keyCode == 63235) {  // right
+        editorMovingRight = true;
+    }
+    if (keyCode == 63232) {  // up
+        editorMovingUp = true;
+    }
+    if (keyCode == 63233) {  // down
+        editorMovingDown = true;
+    }
 
     return YES;
 }
@@ -275,9 +397,9 @@
     unichar keyCode = [character characterAtIndex:0];
     
 	// Player movement
-	if (keyCode == 115) {
+	if (keyCode == 119) {
 		movingUp = false;
-	} else if (keyCode == 119) {
+	} else if (keyCode == 115) {
 		movingDown = false;
 	}
 	if (keyCode == 97) {
@@ -314,6 +436,40 @@
     if (keyCode == 46) {  // .
         finished = true;
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:0.5 scene:[GameScene sceneWithLevel:level+1]]];
+    }
+    if (keyCode == 9) {  // TAB
+        ++editorSelectedEnemy;
+        if (!state.enemies[editorSelectedEnemy].active) {
+            editorSelectedEnemy = 0;
+        }
+    }
+    if (keyCode == 63234) {  // left
+        editorMovingLeft = false;
+    }
+    if (keyCode == 63235) {  // right
+        editorMovingRight = false;
+    }
+    if (keyCode == 63232) {  // up
+        editorMovingUp = false;
+    }
+    if (keyCode == 63233) {  // down
+        editorMovingDown = false;
+    }
+    if (keyCode == 109) {  // m
+        for (int i=0; i<MaxEnemyCount; ++i) {
+            if (!state.enemies[i].active) {
+                state.enemies[i].active = true;
+                break;
+            }
+        }
+    }
+    if (keyCode == 110) {  // n
+        for (int i=MaxEnemyCount-1; i>=0; --i) {
+            if (state.enemies[i].active) {
+                state.enemies[i].active = false;
+                break;
+            }
+        }
     }
     
     return YES;

@@ -131,6 +131,7 @@
 		645C18D6167CEF75008F0644 /* Tile2.png in Resources */ = {isa = PBXBuildFile; fileRef = 645C18D3167CEF75008F0644 /* Tile2.png */; };
 		645C18D7167CEF75008F0644 /* Tile3.png in Resources */ = {isa = PBXBuildFile; fileRef = 645C18D4167CEF75008F0644 /* Tile3.png */; };
 		645C18D8167CEF75008F0644 /* Tile4.png in Resources */ = {isa = PBXBuildFile; fileRef = 645C18D5167CEF75008F0644 /* Tile4.png */; };
+		645C18E2167D1BDC008F0644 /* Enemy.png in Resources */ = {isa = PBXBuildFile; fileRef = 645C18E1167D1BDC008F0644 /* Enemy.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -397,6 +398,7 @@
 		645C18D3167CEF75008F0644 /* Tile2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Tile2.png; path = Resources/Tile2.png; sourceTree = "<group>"; };
 		645C18D4167CEF75008F0644 /* Tile3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Tile3.png; path = Resources/Tile3.png; sourceTree = "<group>"; };
 		645C18D5167CEF75008F0644 /* Tile4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Tile4.png; path = Resources/Tile4.png; sourceTree = "<group>"; };
+		645C18E1167D1BDC008F0644 /* Enemy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Enemy.png; path = Resources/Enemy.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -467,6 +469,7 @@
 		645C1748167C9DB9008F0644 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				645C18E1167D1BDC008F0644 /* Enemy.png */,
 				645C18D3167CEF75008F0644 /* Tile2.png */,
 				645C18D4167CEF75008F0644 /* Tile3.png */,
 				645C18D5167CEF75008F0644 /* Tile4.png */,
@@ -907,6 +910,7 @@
 				645C18D6167CEF75008F0644 /* Tile2.png in Resources */,
 				645C18D7167CEF75008F0644 /* Tile3.png in Resources */,
 				645C18D8167CEF75008F0644 /* Tile4.png in Resources */,
+				645C18E2167D1BDC008F0644 /* Enemy.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
