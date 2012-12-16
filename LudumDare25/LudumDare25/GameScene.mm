@@ -127,6 +127,18 @@
         
         [self loadLevel];
         
+        deactivatingLayer = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 160) width:screenSize.width height:screenSize.height];
+        deactivatingLayer.position = ccp(0, 0);
+        deactivatingLayer.visible = NO;
+        CCLabelTTF* openingLabel = [CCLabelTTF labelWithString:@"YOU ARE OPENING THE VAULT." fontName:@"Monaco" fontSize:20];
+        openingLabel.position = ccp(screenSize.width/2, screenSize.height/2+20);
+        [deactivatingLayer addChild:openingLabel];
+        deactivationCountdownLabel = [CCLabelTTF labelWithString:@"OPENING TIME: " fontName:@"Monaco" fontSize:20];
+        deactivationCountdownLabel.position = ccp(screenSize.width/2, screenSize.height/2-20);
+        [deactivatingLayer addChild:deactivationCountdownLabel];
+        
+        [self addChild:deactivatingLayer];
+        
         [self schedule:@selector(update:)];
         
         self.isKeyboardEnabled = YES;
@@ -192,6 +204,8 @@
 {
     finished = true;
     lost = true;
+    
+    deactivatingLayer.visible = NO;
 
     CCLayerColor* overlay = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 160)];
     [self addChild:overlay];
@@ -211,21 +225,23 @@
     }
 
     // Move player
-    if (movingDown) {
-        state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:0 dy:-dt*PlayerSpeed];
-        state.player.rotation = 90;
-    }
-    if (movingUp) {
-        state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:0 dy:dt*PlayerSpeed];
-        state.player.rotation = 270;
-    }
-    if (movingRight) {
-        state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:dt*PlayerSpeed dy:0];
-        state.player.rotation = 0;
-    }
-    if (movingLeft) {
-        state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:-dt*PlayerSpeed dy:0];
-        state.player.rotation = 180;
+    if (!deactivating) {
+        if (movingDown) {
+            state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:0 dy:-dt*PlayerSpeed];
+            state.player.rotation = 90;
+        }
+        if (movingUp) {
+            state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:0 dy:dt*PlayerSpeed];
+            state.player.rotation = 270;
+        }
+        if (movingRight) {
+            state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:dt*PlayerSpeed dy:0];
+            state.player.rotation = 0;
+        }
+        if (movingLeft) {
+            state.player.position = [self getCorrectedPositionForPosition:state.player.position dx:-dt*PlayerSpeed dy:0];
+            state.player.rotation = 180;
+        }
     }
     
     // Move enemy (editor)
@@ -374,6 +390,59 @@
         }
     }
     
+    if (deactivating) {  // update deactivation
+        Tile& tile = state.tiles[tileBeingDeactivated[0]][tileBeingDeactivated[1]];
+        float elapsed = CFAbsoluteTimeGetCurrent() - deactivateStartTime;
+        if (elapsed >= tile.strength) {  // open!
+            deactivating = false;
+            tile.type = Vault;
+            [self setSpriteY:tile.y X:tile.x type:tile.type];
+            deactivatingLayer.visible = NO;
+        } else {
+            int secsToGo = ceilf(tile.strength - elapsed);
+            [deactivationCountdownLabel setString:[NSString stringWithFormat:@"OPENING TIME: 00:%02d", secsToGo]];
+            deactivatingLayer.visible = YES;
+        }
+    } else {
+        deactivatingLayer.visible = NO;
+    }
+    
+    if (deactivatePressed && !deactivating) {  // start deactivating
+        Player& player = state.player;
+        if (player.tileX < TilesCountX-1) {  // check right
+            if (state.tiles[player.tileY][player.tileX+1].type == Door) {
+                tileBeingDeactivated[0] = player.tileY;
+                tileBeingDeactivated[1] = player.tileX+1;
+                deactivating = true;
+            }
+        }
+        if (player.tileX > 0) {  // check left
+            if (state.tiles[player.tileY][player.tileX-1].type == Door) {
+                tileBeingDeactivated[0] = player.tileY;
+                tileBeingDeactivated[1] = player.tileX-1;
+                deactivating = true;
+            }
+        }
+        if (player.tileY < TilesCountY-1) {  // check up
+            if (state.tiles[player.tileY+1][player.tileX].type == Door) {
+                tileBeingDeactivated[0] = player.tileY+1;
+                tileBeingDeactivated[1] = player.tileX;
+                deactivating = true;
+            }
+        }
+        if (player.tileY > 0) {  // check down
+            if (state.tiles[player.tileY-1][player.tileX].type == Door) {
+                tileBeingDeactivated[0] = player.tileY-1;
+                tileBeingDeactivated[1] = player.tileX;
+                deactivating = true;
+            }
+        }
+
+        if (deactivating) {
+            deactivateStartTime = CFAbsoluteTimeGetCurrent();
+        }
+    }
+    
     // Update sprites
     playerSprite.position = state.player.position;
     playerSprite.rotation = state.player.rotation;
@@ -389,6 +458,9 @@
 {
     NSLog(@"clicked on tile %d, %d", tileY, tileX);
     state.tiles[tileY][tileX].type = editorSelectedTile;
+    if (editorSelectedTile == Door) {
+        state.tiles[tileY][tileX].strength = 5;
+    }
     [self setSpriteY:tileY X:tileX type:state.tiles[tileY][tileX].type];
 }
 
@@ -431,6 +503,11 @@
 		movingRight = true;
 	}
     
+    // Player actions
+    if (keyCode == 32) {  // space
+        deactivatePressed = true;
+    }
+    
     // Editor
     if (keyCode >= 48 && keyCode <= 57) {
         int type = keyCode-48;
@@ -471,6 +548,12 @@
 		movingRight = false;
 	}
     
+    // Player actions
+    if (keyCode == 32) {  // space
+        deactivatePressed = false;
+        deactivating = false;
+    }
+
     // Editor
     if (keyCode == 112) {  // p
         NSLog(@"Saving level data");

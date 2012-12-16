@@ -8,11 +8,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "LudumDare25/GameScene.mm"
-         timestampString = "377313583.100885"
+         timestampString = "377353820.367453"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "258"
-         endingLineNumber = "258"
+         startingLineNumber = "274"
+         endingLineNumber = "274"
          landmarkName = "-update:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -21,11 +21,24 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "LudumDare25/GameScene.mm"
-         timestampString = "377313583.100885"
+         timestampString = "377353820.367453"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "233"
-         endingLineNumber = "233"
+         startingLineNumber = "249"
+         endingLineNumber = "249"
+         landmarkName = "-update:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "LudumDare25/GameScene.mm"
+         timestampString = "377353838.80986"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "221"
+         endingLineNumber = "221"
          landmarkName = "-update:"
          landmarkType = "5">
       </FileBreakpoint>

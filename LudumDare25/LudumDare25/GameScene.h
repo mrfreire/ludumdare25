@@ -146,6 +146,13 @@ struct GameState {
     bool finished;
     bool lost;
     int detectedBy;
+    
+    bool deactivatePressed;
+    bool deactivating;
+    double deactivateStartTime;
+    int tileBeingDeactivated[2];
+    CCLayer* deactivatingLayer;
+    CCLabelTTF* deactivationCountdownLabel;
 }
 
 + (CCScene*)sceneWithLevel:(int)level;
