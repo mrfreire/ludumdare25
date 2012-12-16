@@ -183,6 +183,25 @@
     return newPos;
 }
 
+- (void)restartLevel
+{
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:0.5 scene:[GameScene sceneWithLevel:level]]];
+}
+
+- (void)lose
+{
+    finished = true;
+    lost = true;
+
+    CCLayerColor* overlay = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 160)];
+    [self addChild:overlay];
+    CCLabelTTF* label = [CCLabelTTF labelWithString:@"YOU HAVE BEEN DISCOVERED!" fontName:@"Monaco" fontSize:30];
+    label.position = ccp(screenSize.width/2, screenSize.height/2);
+    [self addChild:label];
+    
+    [self performSelector:@selector(restartLevel) withObject:nil afterDelay:2.0f];
+}
+
 - (void)update:(ccTime)dt
 {
     if (finished) {
@@ -284,21 +303,6 @@
         }
     }
     
-    // Move enemies
-    /*for (int i=0; i<MaxEnemyCount; ++i) {
-        Enemy& enemy = state.enemies[i];
-        enemy.position = [self getCorrectedPositionForPosition:enemy.position dx:enemy.dx*dt dy:enemy.dy*dt];
-        if (enemy.dx > 0) {
-            enemy.rotation = 0;
-        } else if (enemy.dx < 0) {
-            enemy.rotation = 180;
-        } else if (enemy.dy > 0) {
-            enemy.rotation = 90;
-        } else if (enemy.dy < 0) {
-            enemy.rotation = 270;
-        }
-    }*/
-
     // Update tile where each character is
     Tile* playerTile = [self tileContainingPosition:state.player.position];
     assert(playerTile);
@@ -311,6 +315,65 @@
         state.enemies[i].tileY = enemyTile->y;
     }
 
+    // Check detection
+    for (int i=0; i<MaxEnemyCount; ++i) {
+        Enemy& enemy = state.enemies[i];
+        bool detected = false;
+        float diffX = fabsf(enemy.position.x - state.player.position.x);
+        float diffY = fabsf(enemy.position.y - state.player.position.y);
+        if (diffX < TileWidth/(1+DetectionThreshold)) {
+            if (enemy.rotation == 270) {  // facing up
+                for (int y=enemy.tileY; y<TilesCountY; ++y) {
+                    if (!TileIsWalkable[state.tiles[y][enemy.tileX].type]) {
+                        break;
+                    }
+                    if (state.player.tileY == y) {
+                        detected = true;
+                        break;
+                    }
+                }
+            } else if (enemy.rotation == 90) {  // facing down
+                for (int y=enemy.tileY; y>=0; --y) {
+                    if (!TileIsWalkable[state.tiles[y][enemy.tileX].type]) {
+                        break;
+                    }
+                    if (state.player.tileY == y) {
+                        detected = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (diffY < TileHeight/(1+DetectionThreshold)) {
+            if (enemy.rotation == 180) {  // facing left
+                for (int x=enemy.tileX; x>=0; --x) {
+                    if (!TileIsWalkable[state.tiles[enemy.tileY][x].type]) {
+                        break;
+                    }
+                    if (state.player.tileX == x) {
+                        detected = true;
+                        break;
+                    }
+                }
+            } else if (enemy.rotation == 0) {  // facing right
+                for (int x=enemy.tileX; x<TilesCountX; ++x) {
+                    if (!TileIsWalkable[state.tiles[enemy.tileY][x].type]) {
+                        break;
+                    }
+                    if (state.player.tileX == x) {
+                        detected = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (detected) {
+            detectedBy = i;
+            [self lose];
+            break;
+        }
+    }
+    
     // Update sprites
     playerSprite.position = state.player.position;
     playerSprite.rotation = state.player.rotation;

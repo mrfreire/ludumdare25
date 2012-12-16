@@ -24,6 +24,7 @@ const float PlayerSpeed = 150.0f;
 const float EnemyWalkSpeed = 40.0f;
 const float EnemyRunSpeed = 150.0f;
 const float EnemyWaitDuration = 4.0f;
+const float DetectionThreshold = 0.3f;  // proportion that can be seen before being detected
 
 enum TileTypes {
     Floor = 0,
@@ -58,14 +59,14 @@ struct Tile {
 struct Player {
     CGPoint position;
     int tileX, tileY;
-    float rotation;
+    int rotation;
     char _padding[50];
     
     Player()
     : position(CGPointZero)
     , tileX(0)
     , tileY(0)
-    , rotation(0.0f)
+    , rotation(0)
     {
         bzero(_padding, sizeof(_padding));
     }
@@ -143,6 +144,8 @@ struct GameState {
     bool editorMovingLeft;
     bool editorMovingRight;
     bool finished;
+    bool lost;
+    int detectedBy;
 }
 
 + (CCScene*)sceneWithLevel:(int)level;
