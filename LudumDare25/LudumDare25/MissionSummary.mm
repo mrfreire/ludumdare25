@@ -10,6 +10,7 @@
 
 #import "MissionNotes.h"
 #import "Menu.h"
+#import "SimpleAudioEngine.h"
 
 @implementation MissionSummary
 
@@ -72,6 +73,8 @@
         return NO;
     }
     
+    [[SimpleAudioEngine sharedEngine] playEffect:@"key.wav"];
+
     goingToNextScreen = YES;
     
     [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[Menu scene]]];

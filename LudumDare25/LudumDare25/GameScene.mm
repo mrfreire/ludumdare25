@@ -11,6 +11,7 @@
 #import "Menu.h"
 #import "GameProgress.h"
 #import "MissionSummary.h"
+#import "SimpleAudioEngine.h"
 
 @implementation GameScene
 
@@ -278,6 +279,8 @@
 
 - (void)lose
 {
+    [[SimpleAudioEngine sharedEngine] playEffect:@"lose.wav"];
+
     finished = true;
     lost = true;
     
@@ -294,6 +297,8 @@
 
 - (void)win
 {
+    [[SimpleAudioEngine sharedEngine] playEffect:@"win.wav"];
+
     finished = true;
     lost = true;
     
@@ -660,6 +665,7 @@
             tile.type = Vault;
             [self setSpriteY:tile.y X:tile.x type:tile.type];
             deactivatingLayer.visible = NO;
+            [[SimpleAudioEngine sharedEngine] playEffect:@"vaultdoor.wav"];
         } else {
             int secsToGo = ceilf(DoorOpeningTime - elapsed);
             [deactivationCountdownLabel setString:[NSString stringWithFormat:@"OPENING TIME: 00:%02d", secsToGo]];
@@ -754,7 +760,7 @@
 
 - (void)clickedOnTileY:(int)tileY X:(int)tileX
 {
-    NSLog(@"clicked on tile %d, %d", tileY, tileX);
+    //NSLog(@"clicked on tile %d, %d", tileY, tileX);
     state.tiles[tileY][tileX].type = editorSelectedTile;
     [self setSpriteY:tileY X:tileX type:state.tiles[tileY][tileX].type];
 }
@@ -805,11 +811,15 @@
         state.tiles[y][x].type = Door;
     }
     [self setSpriteY:y X:x type:state.tiles[y][x].type];
+    
+    [[SimpleAudioEngine sharedEngine] playEffect:@"door.wav"];
 }
 
 - (void)toggleLight:(int)i
 {
     state.items[i].collected = !state.items[i].collected;
+
+    [[SimpleAudioEngine sharedEngine] playEffect:@"light.wav"];
 }
 
 - (int)mouseEdit:(NSEvent*)event item:(BOOL)isItem

@@ -11,6 +11,7 @@
 #import "GameScene.h"
 #import "GameProgress.h"
 #import "MissionNotes.h"
+#import "SimpleAudioEngine.h"
 
 @implementation Menu
 
@@ -101,12 +102,19 @@
     [self goToLevel:5];
 }
 
+- (BOOL)ccKeyUp:(NSEvent *)event
+{
+    //[[SimpleAudioEngine sharedEngine] playEffect:@"key.wav"];
+    return NO;
+}
+
 - (BOOL)ccKeyDown:(NSEvent*)event
 {
 	NSString* character = [event characters];
     unichar keyCode = [character characterAtIndex:0];
 
     if (keyCode >= 49 && keyCode <= 53) {
+        [[SimpleAudioEngine sharedEngine] playEffect:@"key.wav"];
         int level = keyCode-48;
         [self goToLevel:level];
     }

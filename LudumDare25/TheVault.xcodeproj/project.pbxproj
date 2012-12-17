@@ -14,6 +14,14 @@
 		64073149167E851D001CE977 /* GameProgress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64073147167E851C001CE977 /* GameProgress.cpp */; };
 		64086C45167E903800D14959 /* MissionNotes.mm in Sources */ = {isa = PBXBuildFile; fileRef = 64086C44167E903800D14959 /* MissionNotes.mm */; };
 		64086C49167E97F300D14959 /* MissionSummary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 64086C48167E97F300D14959 /* MissionSummary.mm */; };
+		64086C51167EA21800D14959 /* cash.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086C4A167EA21800D14959 /* cash.wav */; };
+		64086C52167EA21800D14959 /* door.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086C4B167EA21800D14959 /* door.wav */; };
+		64086C53167EA21800D14959 /* key.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086C4C167EA21800D14959 /* key.wav */; };
+		64086C54167EA21800D14959 /* light.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086C4D167EA21800D14959 /* light.wav */; };
+		64086C55167EA21800D14959 /* lose.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086C4E167EA21800D14959 /* lose.wav */; };
+		64086C56167EA21800D14959 /* vaultdoor.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086C4F167EA21800D14959 /* vaultdoor.wav */; };
+		64086C57167EA21800D14959 /* win.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086C50167EA21800D14959 /* win.wav */; };
+		64086C59167EA25000D14959 /* knife.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086C58167EA25000D14959 /* knife.wav */; };
 		64202166167E00010027E2D0 /* Item0.png in Resources */ = {isa = PBXBuildFile; fileRef = 64202165167E00010027E2D0 /* Item0.png */; };
 		6420216A167E22F70027E2D0 /* Tile5.png in Resources */ = {isa = PBXBuildFile; fileRef = 64202168167E22F70027E2D0 /* Tile5.png */; };
 		6420216B167E22F70027E2D0 /* Tile6.png in Resources */ = {isa = PBXBuildFile; fileRef = 64202169167E22F70027E2D0 /* Tile6.png */; };
@@ -155,6 +163,14 @@
 		64086C44167E903800D14959 /* MissionNotes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MissionNotes.mm; sourceTree = "<group>"; };
 		64086C47167E97F300D14959 /* MissionSummary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MissionSummary.h; sourceTree = "<group>"; };
 		64086C48167E97F300D14959 /* MissionSummary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MissionSummary.mm; sourceTree = "<group>"; };
+		64086C4A167EA21800D14959 /* cash.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = cash.wav; path = Resources/cash.wav; sourceTree = "<group>"; };
+		64086C4B167EA21800D14959 /* door.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = door.wav; path = Resources/door.wav; sourceTree = "<group>"; };
+		64086C4C167EA21800D14959 /* key.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = key.wav; path = Resources/key.wav; sourceTree = "<group>"; };
+		64086C4D167EA21800D14959 /* light.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = light.wav; path = Resources/light.wav; sourceTree = "<group>"; };
+		64086C4E167EA21800D14959 /* lose.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = lose.wav; path = Resources/lose.wav; sourceTree = "<group>"; };
+		64086C4F167EA21800D14959 /* vaultdoor.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = vaultdoor.wav; path = Resources/vaultdoor.wav; sourceTree = "<group>"; };
+		64086C50167EA21800D14959 /* win.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = win.wav; path = Resources/win.wav; sourceTree = "<group>"; };
+		64086C58167EA25000D14959 /* knife.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = knife.wav; path = Resources/knife.wav; sourceTree = "<group>"; };
 		64202165167E00010027E2D0 /* Item0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Item0.png; path = Resources/Item0.png; sourceTree = "<group>"; };
 		64202168167E22F70027E2D0 /* Tile5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Tile5.png; path = Resources/Tile5.png; sourceTree = "<group>"; };
 		64202169167E22F70027E2D0 /* Tile6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Tile6.png; path = Resources/Tile6.png; sourceTree = "<group>"; };
@@ -498,6 +514,14 @@
 		645C1748167C9DB9008F0644 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				64086C4A167EA21800D14959 /* cash.wav */,
+				64086C4B167EA21800D14959 /* door.wav */,
+				64086C4C167EA21800D14959 /* key.wav */,
+				64086C58167EA25000D14959 /* knife.wav */,
+				64086C4D167EA21800D14959 /* light.wav */,
+				64086C4E167EA21800D14959 /* lose.wav */,
+				64086C4F167EA21800D14959 /* vaultdoor.wav */,
+				64086C50167EA21800D14959 /* win.wav */,
 				6407313E167E4CDC001CE977 /* Item1.png */,
 				6407313F167E4CDC001CE977 /* Item2.png */,
 				64073140167E4CDC001CE977 /* Item3.png */,
@@ -954,6 +978,14 @@
 				64073143167E4CDC001CE977 /* Item2.png in Resources */,
 				64073144167E4CDC001CE977 /* Item3.png in Resources */,
 				64073145167E4CDC001CE977 /* Item4.png in Resources */,
+				64086C51167EA21800D14959 /* cash.wav in Resources */,
+				64086C52167EA21800D14959 /* door.wav in Resources */,
+				64086C53167EA21800D14959 /* key.wav in Resources */,
+				64086C54167EA21800D14959 /* light.wav in Resources */,
+				64086C55167EA21800D14959 /* lose.wav in Resources */,
+				64086C56167EA21800D14959 /* vaultdoor.wav in Resources */,
+				64086C57167EA21800D14959 /* win.wav in Resources */,
+				64086C59167EA25000D14959 /* knife.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

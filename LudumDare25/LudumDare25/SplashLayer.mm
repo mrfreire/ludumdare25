@@ -8,6 +8,7 @@
 
 #import "SplashLayer.h"
 #import "Menu.h"
+#import "SimpleAudioEngine.h"
 
 @implementation SplashLayer
 
@@ -50,6 +51,7 @@
 - (BOOL)ccKeyDown:(NSEvent*)event
 {
     [self goToNextScreen];
+    [[SimpleAudioEngine sharedEngine] playEffect:@"key.wav"];
     return NO;
 }
 

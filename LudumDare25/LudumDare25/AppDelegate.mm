@@ -10,6 +10,7 @@
 
 #import "SplashLayer.h"
 #import "GameScene.h"
+#import "SimpleAudioEngine.h"
 
 @implementation LudumDare25AppDelegate
 @synthesize window=window_, glView=glView_;
@@ -37,6 +38,17 @@
 	// Center main window
 	[window_ center];
 	
+    [[SimpleAudioEngine sharedEngine] preloadEffect:@"cash.wav"];
+    [[SimpleAudioEngine sharedEngine] preloadEffect:@"door.wav"];
+    [[SimpleAudioEngine sharedEngine] preloadEffect:@"key.wav"];
+    [[SimpleAudioEngine sharedEngine] preloadEffect:@"knife.wav"];
+    [[SimpleAudioEngine sharedEngine] preloadEffect:@"light.wav"];
+    [[SimpleAudioEngine sharedEngine] preloadEffect:@"lose.wav"];
+    [[SimpleAudioEngine sharedEngine] preloadEffect:@"vaultdoor.wav"];
+    [[SimpleAudioEngine sharedEngine] preloadEffect:@"win.wav"];
+    
+    //[[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"bg.aif"];
+    
 	//[director runWithScene:[GameScene sceneWithLevel:0]];
     [director runWithScene:[CCTransitionFade transitionWithDuration:1.0 scene:[SplashLayer sceneWithId:0]]];
 }

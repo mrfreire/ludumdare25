@@ -10,6 +10,7 @@
 
 #import "GameScene.h"
 #import "Menu.h"
+#import "SimpleAudioEngine.h"
 
 @implementation MissionNotes
 
@@ -99,6 +100,8 @@
         return NO;
     }
     
+    [[SimpleAudioEngine sharedEngine] playEffect:@"key.wav"];
+
     goingToNextScreen = true;
     
     if (keyCode == 27) {
