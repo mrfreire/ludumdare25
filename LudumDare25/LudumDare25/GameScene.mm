@@ -740,9 +740,7 @@
     }
     
     // Update lighting
-    if (level == 2 || level == 4 || level == 5) {
-        [self updateLighting];
-    }
+    [self updateLighting];
     
     // Update sprites
     playerSprite.position = player.position;
