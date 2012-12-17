@@ -66,8 +66,8 @@
 
 - (BOOL)ccKeyDown:(NSEvent*)event
 {
-	//NSString* character = [event characters];
-    //unichar keyCode = [character characterAtIndex:0];
+	NSString* character = [event characters];
+    unichar keyCode = [character characterAtIndex:0];
     
     if (goingToNextScreen) {
         return NO;
@@ -77,12 +77,12 @@
 
     goingToNextScreen = YES;
     
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[Menu scene]]];
-    //if (keyCode == 27) {
-    //    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[Menu scene]]];
-    //} else {
-    //    [self goToNextLevel];
-    //}
+    //[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[Menu scene]]];
+    if (keyCode == 27) {
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[Menu scene]]];
+    } else {
+        [self goToNextLevel];
+    }
 
     return NO;
 }
