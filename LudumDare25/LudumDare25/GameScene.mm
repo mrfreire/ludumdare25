@@ -75,7 +75,8 @@
 
 - (void)loadLevel
 {
-    FILE* f = fopen(((NSString*)[NSString stringWithFormat:@"level%d.bin", level]).UTF8String, "r");
+    NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:[NSString stringWithFormat:@"level%d.bin", level]];
+    FILE* f = fopen(path.UTF8String, "r");
     if (f) {
         fread(&state, sizeof(state), 1, f);
         fclose(f);

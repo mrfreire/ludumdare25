@@ -22,6 +22,11 @@
 		64086C56167EA21800D14959 /* vaultdoor.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086C4F167EA21800D14959 /* vaultdoor.wav */; };
 		64086C57167EA21800D14959 /* win.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086C50167EA21800D14959 /* win.wav */; };
 		64086C59167EA25000D14959 /* knife.wav in Resources */ = {isa = PBXBuildFile; fileRef = 64086C58167EA25000D14959 /* knife.wav */; };
+		64086C65167EB08600D14959 /* level1.bin in Resources */ = {isa = PBXBuildFile; fileRef = 64086C60167EB08600D14959 /* level1.bin */; };
+		64086C66167EB08600D14959 /* level2.bin in Resources */ = {isa = PBXBuildFile; fileRef = 64086C61167EB08600D14959 /* level2.bin */; };
+		64086C67167EB08600D14959 /* level3.bin in Resources */ = {isa = PBXBuildFile; fileRef = 64086C62167EB08600D14959 /* level3.bin */; };
+		64086C68167EB08600D14959 /* level4.bin in Resources */ = {isa = PBXBuildFile; fileRef = 64086C63167EB08600D14959 /* level4.bin */; };
+		64086C69167EB08600D14959 /* level5.bin in Resources */ = {isa = PBXBuildFile; fileRef = 64086C64167EB08600D14959 /* level5.bin */; };
 		64202166167E00010027E2D0 /* Item0.png in Resources */ = {isa = PBXBuildFile; fileRef = 64202165167E00010027E2D0 /* Item0.png */; };
 		6420216A167E22F70027E2D0 /* Tile5.png in Resources */ = {isa = PBXBuildFile; fileRef = 64202168167E22F70027E2D0 /* Tile5.png */; };
 		6420216B167E22F70027E2D0 /* Tile6.png in Resources */ = {isa = PBXBuildFile; fileRef = 64202169167E22F70027E2D0 /* Tile6.png */; };
@@ -171,6 +176,11 @@
 		64086C4F167EA21800D14959 /* vaultdoor.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = vaultdoor.wav; path = Resources/vaultdoor.wav; sourceTree = "<group>"; };
 		64086C50167EA21800D14959 /* win.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = win.wav; path = Resources/win.wav; sourceTree = "<group>"; };
 		64086C58167EA25000D14959 /* knife.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = knife.wav; path = Resources/knife.wav; sourceTree = "<group>"; };
+		64086C60167EB08600D14959 /* level1.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = level1.bin; path = ../../Levels/level1.bin; sourceTree = "<group>"; };
+		64086C61167EB08600D14959 /* level2.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = level2.bin; path = ../../Levels/level2.bin; sourceTree = "<group>"; };
+		64086C62167EB08600D14959 /* level3.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = level3.bin; path = ../../Levels/level3.bin; sourceTree = "<group>"; };
+		64086C63167EB08600D14959 /* level4.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = level4.bin; path = ../../Levels/level4.bin; sourceTree = "<group>"; };
+		64086C64167EB08600D14959 /* level5.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = level5.bin; path = ../../Levels/level5.bin; sourceTree = "<group>"; };
 		64202165167E00010027E2D0 /* Item0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Item0.png; path = Resources/Item0.png; sourceTree = "<group>"; };
 		64202168167E22F70027E2D0 /* Tile5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Tile5.png; path = Resources/Tile5.png; sourceTree = "<group>"; };
 		64202169167E22F70027E2D0 /* Tile6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Tile6.png; path = Resources/Tile6.png; sourceTree = "<group>"; };
@@ -514,6 +524,11 @@
 		645C1748167C9DB9008F0644 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				64086C60167EB08600D14959 /* level1.bin */,
+				64086C61167EB08600D14959 /* level2.bin */,
+				64086C62167EB08600D14959 /* level3.bin */,
+				64086C63167EB08600D14959 /* level4.bin */,
+				64086C64167EB08600D14959 /* level5.bin */,
 				64086C4A167EA21800D14959 /* cash.wav */,
 				64086C4B167EA21800D14959 /* door.wav */,
 				64086C4C167EA21800D14959 /* key.wav */,
@@ -986,6 +1001,11 @@
 				64086C56167EA21800D14959 /* vaultdoor.wav in Resources */,
 				64086C57167EA21800D14959 /* win.wav in Resources */,
 				64086C59167EA25000D14959 /* knife.wav in Resources */,
+				64086C65167EB08600D14959 /* level1.bin in Resources */,
+				64086C66167EB08600D14959 /* level2.bin in Resources */,
+				64086C67167EB08600D14959 /* level3.bin in Resources */,
+				64086C68167EB08600D14959 /* level4.bin in Resources */,
+				64086C69167EB08600D14959 /* level5.bin in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
