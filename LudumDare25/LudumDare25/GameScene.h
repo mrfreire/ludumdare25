@@ -185,6 +185,10 @@ struct GameState {
     CCSprite* itemSprites[MaxItemCount];
     CGSize screenSize;
     
+    double levelTime;
+    
+    bool paused;
+    
     bool movingUp;
     bool movingDown;
     bool movingLeft;
@@ -208,6 +212,8 @@ struct GameState {
     int tileBeingDeactivated[2];
     CCLayer* deactivatingLayer;
     CCLabelTTF* deactivationCountdownLabel;
+    
+    CCLayer* pauseLayer;
     
     int itemsInInventory;
     

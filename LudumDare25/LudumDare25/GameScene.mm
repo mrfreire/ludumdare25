@@ -8,6 +8,10 @@
 
 #import "GameScene.h"
 
+#import "Menu.h"
+#import "GameProgress.h"
+#import "MissionSummary.h"
+
 @implementation GameScene
 
 + (CCScene*)sceneWithLevel:(int)level
@@ -100,6 +104,7 @@
     for (int i=0; i<MaxItemCount; ++i) {
         Item& item = state.items[i];
         item.collected = false;
+        item.mustBeCollected = (item.type == Cash);
     }
     
     // Reset lighting
@@ -122,7 +127,6 @@
         itemSprites[i].visible = NO;
     }
     
-
     [self addChild:board];
     
     [playerSprite removeFromParentAndCleanup:YES];
@@ -137,7 +141,21 @@
         enemySprites[i].visible = state.enemies[i].active;
         [self addChild:enemySprites[i]];
     }
+    
+    // Level 4
+    if (level == 4) {
+        for (int i=0; i<MaxItemCount; ++i) {
+            Item& item = state.items[i];
+            if (item.active && !item.collected && item.mustBeCollected) {
+                item.collected = true;
+                itemSprites[i].position = ccp(20+(itemsInInventory%4)*ItemWidth+ItemWidth/2,
+                                              screenSize.height-20-ItemHeight/2-(itemsInInventory/4)*ItemHeight);
+                ++itemsInInventory;
+            }
+        }
+    }
 }
+
 
 - (id)initWithLevel:(int)level_
 {
@@ -154,28 +172,38 @@
             "ACT 2: LIGHTS",
             "ACT 3: DOORS",
             "ACT 4: KILL",
-            "ACT 5: BERMUDA"
+            "ACT 5: BARBADOS"
         };
         
         hasKnife = (level == 4);
-        CCLabelTTF *label = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%s", levelTitles[level-1]] fontName:@"Monaco" fontSize:20];
+        CCLabelTTF *label = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%s", levelTitles[level-1]] fontName:@"Impact" fontSize:24];
         label.anchorPoint = ccp(0, 0);
 		label.position = ccp(20, 20);
 		[self addChild:label];
         
         [self loadLevel];
         
-        deactivatingLayer = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 160) width:screenSize.width height:screenSize.height];
+        deactivatingLayer = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 200) width:screenSize.width height:screenSize.height];
         deactivatingLayer.position = ccp(0, 0);
         deactivatingLayer.visible = NO;
-        CCLabelTTF* openingLabel = [CCLabelTTF labelWithString:@"YOU ARE OPENING THE VAULT." fontName:@"Monaco" fontSize:20];
+        CCLabelTTF* openingLabel = [CCLabelTTF labelWithString:@"YOU ARE OPENING THE VAULT." fontName:@"Impact" fontSize:24];
         openingLabel.position = ccp(screenSize.width/2, screenSize.height/2+20);
         [deactivatingLayer addChild:openingLabel];
-        deactivationCountdownLabel = [CCLabelTTF labelWithString:@"OPENING TIME: " fontName:@"Monaco" fontSize:20];
+        deactivationCountdownLabel = [CCLabelTTF labelWithString:@"OPENING TIME: " fontName:@"Impact" fontSize:24];
         deactivationCountdownLabel.position = ccp(screenSize.width/2, screenSize.height/2-20);
         [deactivatingLayer addChild:deactivationCountdownLabel];
         
         [self addChild:deactivatingLayer];
+        
+        pauseLayer = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 200) width:screenSize.width height:screenSize.height];
+        CCLabelTTF *labelPause = [CCLabelTTF labelWithString:@"PAUSED" fontName:@"Impact" fontSize:60];
+        labelPause.position = ccp(screenSize.width/2, screenSize.height*2/3);
+        [pauseLayer addChild:labelPause];
+        CCLabelTTF *labelPause2 = [CCLabelTTF labelWithString:@"Press ESC to exit, or P to resume." fontName:@"Impact" fontSize:28];
+        labelPause2.position = ccp(screenSize.width/2, screenSize.height*1/3);
+        [pauseLayer addChild:labelPause2];
+        pauseLayer.visible = NO;
+        [self addChild:pauseLayer];
         
         [self schedule:@selector(update:)];
         
@@ -235,12 +263,17 @@
 
 - (void)restartLevel
 {
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:0.5 scene:[GameScene sceneWithLevel:level]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[GameScene sceneWithLevel:level]]];
 }
 
 - (void)advanceLevel
 {
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:0.5 scene:[GameScene sceneWithLevel:level+1]]];
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[MissionSummary sceneWithLevel:level time:levelTime]]];
+}
+
+- (void)exitToMenu
+{
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[Menu scene]]];
 }
 
 - (void)lose
@@ -252,8 +285,8 @@
 
     CCLayerColor* overlay = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 160)];
     [self addChild:overlay];
-    CCLabelTTF* label = [CCLabelTTF labelWithString:@"YOU HAVE BEEN DISCOVERED!" fontName:@"Monaco" fontSize:30];
-    label.position = ccp(screenSize.width/2, screenSize.height/2);
+    CCLabelTTF* label = [CCLabelTTF labelWithString:@"YOU HAVE BEEN CAUGHT!" fontName:@"Impact" fontSize:60];
+    label.position = ccp(screenSize.width/2, screenSize.height*2/3);
     [self addChild:label];
     
     [self performSelector:@selector(restartLevel) withObject:nil afterDelay:2.0f];
@@ -268,9 +301,13 @@
     
     CCLayerColor* overlay = [CCLayerColor layerWithColor:ccc4(0, 0, 0, 160)];
     [self addChild:overlay];
-    CCLabelTTF* label = [CCLabelTTF labelWithString:@"YOU MADE IT!" fontName:@"Monaco" fontSize:30];
-    label.position = ccp(screenSize.width/2, screenSize.height/2);
+    CCLabelTTF* label = [CCLabelTTF labelWithString:@"YOU HAVE ESCAPED WITH THE MONEY!" fontName:@"Impact" fontSize:60];
+    label.position = ccp(screenSize.width/2, screenSize.height*2/3);
     [self addChild:label];
+    
+    GameProgress progress = loadProgress();
+    progress.levelAvailable[level] = true;  // next level is now avaliable
+    saveProgress(progress);
     
     [self performSelector:@selector(advanceLevel) withObject:nil afterDelay:2.0f];
 }
@@ -409,7 +446,16 @@
         [[CCEventDispatcher sharedDispatcher] removeAllMouseDelegates];
         return;
     }
+    
+    if (paused) {
+        pauseLayer.visible = YES;
+        return;
+    } else {
+        pauseLayer.visible = NO;
+    }
 
+    levelTime += dt;
+    
     Player& player = state.player;
     
     // Move player
@@ -546,6 +592,9 @@
     // Check detection
     for (int i=0; i<MaxEnemyCount; ++i) {
         Enemy& enemy = state.enemies[i];
+        if (!enemy.active) {
+            continue;
+        }
         bool detected = false;
         float diffX = fabsf(enemy.position.x - player.position.x);
         float diffY = fabsf(enemy.position.y - player.position.y);
@@ -674,7 +723,7 @@
         bool allCollected = true;
         for (int i=0; i<MaxItemCount; ++i) {
             const Item& item = state.items[i];
-            if (item.mustBeCollected && !item.collected) {
+            if (item.active && item.mustBeCollected && !item.collected) {
                 allCollected = false;
             }
         }
@@ -742,6 +791,7 @@
             state.items[i].type = 0;
             state.items[i].active = false;
         } else {
+            state.items[i].mustBeCollected = (state.items[i].type == Cash);
             [self setItemSprite:i Y:tileY X:tileX type:state.items[i].type];
         }
     }
@@ -811,6 +861,7 @@
     }
     
     // Editor
+#if DEBUG == 1
     if (keyCode >= 48 && keyCode <= 57) {
         int type = keyCode-48;
         if (type < TileTypesCount) {
@@ -829,6 +880,7 @@
     if (keyCode == 63233) {  // down
         editorMovingDown = true;
     }
+#endif
 
     return YES;
 }
@@ -857,7 +909,12 @@
         usingKnife = true;
     }
     
-    if (keyCode == 32) {  // space
+    if (keyCode == 27) {  // ESC
+        finished = true;
+        [self exitToMenu];
+    }
+    
+    if (keyCode == 32 && !finished && !paused) {  // space
         deactivatePressed = false;
         deactivating = false;
 
@@ -897,9 +954,14 @@
             }
         }
     }
-
-    // Editor
+    
     if (keyCode == 112) {  // p
+        paused = !paused;
+    }
+
+#if DEBUG == 1
+    // Editor
+    if (keyCode == 111) {  // o
         NSLog(@"Saving level data");
         FILE* f = fopen(((NSString*)[NSString stringWithFormat:@"level%d.bin", level]).UTF8String, "w");
         if (f) {
@@ -978,6 +1040,7 @@
             enemy.patrolTileB[1] = enemy.tileX;
         }
     }
+#endif
     
     return YES;
 }

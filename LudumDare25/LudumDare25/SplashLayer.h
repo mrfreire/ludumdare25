@@ -10,7 +10,7 @@
 
 @interface SplashLayer : CCLayer
 {
-    BOOL keyPressed;
+    BOOL goingToNextScreen;
 }
 
 + (CCScene*)sceneWithId:(int)i;

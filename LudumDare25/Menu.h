@@ -8,9 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import "cocos2d.h"
+#import "GameProgress.h"
 
 @interface Menu : CCLayer {
-    
+    BOOL goingToGame;
+    GameProgress progress;
 }
 
 + (CCScene *) scene;

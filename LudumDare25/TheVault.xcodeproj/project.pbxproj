@@ -11,6 +11,9 @@
 		64073143167E4CDC001CE977 /* Item2.png in Resources */ = {isa = PBXBuildFile; fileRef = 6407313F167E4CDC001CE977 /* Item2.png */; };
 		64073144167E4CDC001CE977 /* Item3.png in Resources */ = {isa = PBXBuildFile; fileRef = 64073140167E4CDC001CE977 /* Item3.png */; };
 		64073145167E4CDC001CE977 /* Item4.png in Resources */ = {isa = PBXBuildFile; fileRef = 64073141167E4CDC001CE977 /* Item4.png */; };
+		64073149167E851D001CE977 /* GameProgress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64073147167E851C001CE977 /* GameProgress.cpp */; };
+		64086C45167E903800D14959 /* MissionNotes.mm in Sources */ = {isa = PBXBuildFile; fileRef = 64086C44167E903800D14959 /* MissionNotes.mm */; };
+		64086C49167E97F300D14959 /* MissionSummary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 64086C48167E97F300D14959 /* MissionSummary.mm */; };
 		64202166167E00010027E2D0 /* Item0.png in Resources */ = {isa = PBXBuildFile; fileRef = 64202165167E00010027E2D0 /* Item0.png */; };
 		6420216A167E22F70027E2D0 /* Tile5.png in Resources */ = {isa = PBXBuildFile; fileRef = 64202168167E22F70027E2D0 /* Tile5.png */; };
 		6420216B167E22F70027E2D0 /* Tile6.png in Resources */ = {isa = PBXBuildFile; fileRef = 64202169167E22F70027E2D0 /* Tile6.png */; };
@@ -146,10 +149,16 @@
 		6407313F167E4CDC001CE977 /* Item2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Item2.png; path = Resources/Item2.png; sourceTree = "<group>"; };
 		64073140167E4CDC001CE977 /* Item3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Item3.png; path = Resources/Item3.png; sourceTree = "<group>"; };
 		64073141167E4CDC001CE977 /* Item4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Item4.png; path = Resources/Item4.png; sourceTree = "<group>"; };
+		64073147167E851C001CE977 /* GameProgress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameProgress.cpp; sourceTree = "<group>"; };
+		64073148167E851C001CE977 /* GameProgress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameProgress.h; sourceTree = "<group>"; };
+		64086C43167E903800D14959 /* MissionNotes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MissionNotes.h; sourceTree = "<group>"; };
+		64086C44167E903800D14959 /* MissionNotes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MissionNotes.mm; sourceTree = "<group>"; };
+		64086C47167E97F300D14959 /* MissionSummary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MissionSummary.h; sourceTree = "<group>"; };
+		64086C48167E97F300D14959 /* MissionSummary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MissionSummary.mm; sourceTree = "<group>"; };
 		64202165167E00010027E2D0 /* Item0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Item0.png; path = Resources/Item0.png; sourceTree = "<group>"; };
 		64202168167E22F70027E2D0 /* Tile5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Tile5.png; path = Resources/Tile5.png; sourceTree = "<group>"; };
 		64202169167E22F70027E2D0 /* Tile6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Tile6.png; path = Resources/Tile6.png; sourceTree = "<group>"; };
-		645C1737167C9DB9008F0644 /* LudumDare25.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LudumDare25.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		645C1737167C9DB9008F0644 /* TheVault.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TheVault.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		645C173B167C9DB9008F0644 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		645C173D167C9DB9008F0644 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		645C173F167C9DB9008F0644 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
@@ -444,7 +453,7 @@
 		645C1738167C9DB9008F0644 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				645C1737167C9DB9008F0644 /* LudumDare25.app */,
+				645C1737167C9DB9008F0644 /* TheVault.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -473,6 +482,12 @@
 				645C18C5167CAFFE008F0644 /* Menu.mm */,
 				645C18CA167CB08A008F0644 /* GameScene.h */,
 				645C18CB167CB08A008F0644 /* GameScene.mm */,
+				64073148167E851C001CE977 /* GameProgress.h */,
+				64073147167E851C001CE977 /* GameProgress.cpp */,
+				64086C43167E903800D14959 /* MissionNotes.h */,
+				64086C44167E903800D14959 /* MissionNotes.mm */,
+				64086C47167E97F300D14959 /* MissionSummary.h */,
+				64086C48167E97F300D14959 /* MissionSummary.mm */,
 				645C1748167C9DB9008F0644 /* Resources */,
 				645C1755167C9DB9008F0644 /* libs */,
 				645C18B5167C9DBF008F0644 /* Supporting Files */,
@@ -872,9 +887,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		645C1736167C9DB9008F0644 /* LudumDare25 */ = {
+		645C1736167C9DB9008F0644 /* TheVault */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 645C18C1167C9DBF008F0644 /* Build configuration list for PBXNativeTarget "LudumDare25" */;
+			buildConfigurationList = 645C18C1167C9DBF008F0644 /* Build configuration list for PBXNativeTarget "TheVault" */;
 			buildPhases = (
 				645C1733167C9DB9008F0644 /* Sources */,
 				645C1734167C9DB9008F0644 /* Frameworks */,
@@ -884,9 +899,9 @@
 			);
 			dependencies = (
 			);
-			name = LudumDare25;
+			name = TheVault;
 			productName = LudumDare25;
-			productReference = 645C1737167C9DB9008F0644 /* LudumDare25.app */;
+			productReference = 645C1737167C9DB9008F0644 /* TheVault.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -897,7 +912,7 @@
 			attributes = {
 				LastUpgradeCheck = 0450;
 			};
-			buildConfigurationList = 645C1731167C9DB9008F0644 /* Build configuration list for PBXProject "LudumDare25" */;
+			buildConfigurationList = 645C1731167C9DB9008F0644 /* Build configuration list for PBXProject "TheVault" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -910,7 +925,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				645C1736167C9DB9008F0644 /* LudumDare25 */,
+				645C1736167C9DB9008F0644 /* TheVault */,
 			);
 		};
 /* End PBXProject section */
@@ -1056,6 +1071,9 @@
 				645C18BE167C9DBF008F0644 /* SplashLayer.mm in Sources */,
 				645C18C6167CAFFE008F0644 /* Menu.mm in Sources */,
 				645C18CC167CB08A008F0644 /* GameScene.mm in Sources */,
+				64073149167E851D001CE977 /* GameProgress.cpp in Sources */,
+				64086C45167E903800D14959 /* MissionNotes.mm in Sources */,
+				64086C49167E97F300D14959 /* MissionSummary.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1136,7 +1154,7 @@
 					"-lz",
 					"-ObjC",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = TheVault;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1157,7 +1175,7 @@
 					"-lz",
 					"-ObjC",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = TheVault;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1165,7 +1183,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		645C1731167C9DB9008F0644 /* Build configuration list for PBXProject "LudumDare25" */ = {
+		645C1731167C9DB9008F0644 /* Build configuration list for PBXProject "TheVault" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				645C18BF167C9DBF008F0644 /* Debug */,
@@ -1174,7 +1192,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		645C18C1167C9DBF008F0644 /* Build configuration list for PBXNativeTarget "LudumDare25" */ = {
+		645C18C1167C9DBF008F0644 /* Build configuration list for PBXNativeTarget "TheVault" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				645C18C2167C9DBF008F0644 /* Debug */,

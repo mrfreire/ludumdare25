@@ -24,31 +24,33 @@
 	if( (self=[super init]) ) {
 		CGSize size = [[CCDirector sharedDirector] winSize];
         
-        CCLabelTTF* label = [CCLabelTTF labelWithString:@"THE VAULT" fontName:@"Monaco" fontSize:40];
-        CCLabelTTF* label2 = [CCLabelTTF labelWithString:@"A 48-hour Ludum Dare game by Manuel Freire" fontName:@"Monaco" fontSize:24];
-        label.position = ccp(size.width/2, size.height/2);
-        label2.position = ccp(size.width/2, size.height/2-50);
+        CCLabelTTF* label = [CCLabelTTF labelWithString:@"THE VAULT" fontName:@"Impact" fontSize:120];
+        CCLabelTTF* label2 = [CCLabelTTF labelWithString:@"A 48-hour Ludum Dare game by Manuel Freire" fontName:@"Impact" fontSize:24];
+        label.anchorPoint = ccp(0.5, 0.5);
+        label.position = ccp(size.width/2, size.height*2/3);
+        label2.anchorPoint = ccp(0.5, 1);
+        label2.position = ccp(size.width/2, size.height*1/3);
         [self addChild:label];
         [self addChild:label2];
         
         self.isKeyboardEnabled = YES;
-        
-        //[self performSelector:@selector(goToNextScreen) withObject:nil afterDelay:3];
+        [self performSelector:@selector(goToNextScreen) withObject:nil afterDelay:3];
 	}
 	return self;
 }
 
 - (void)goToNextScreen
 {
-    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:2.0 scene:[Menu scene]]];
+    if (!goingToNextScreen) {
+        goingToNextScreen = YES;
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[Menu scene]]];
+    }
 }
 
 - (BOOL)ccKeyDown:(NSEvent*)event
 {
-    if (!keyPressed) {
-        [self goToNextScreen];
-    }
-    return YES;
+    [self goToNextScreen];
+    return NO;
 }
 
 

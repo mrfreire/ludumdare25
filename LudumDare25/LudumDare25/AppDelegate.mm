@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+
 #import "SplashLayer.h"
 #import "GameScene.h"
 
@@ -28,6 +29,8 @@
 	// Use kCCDirectorResize_NoScale if you don't want auto-scaling.
 	[director setResizeMode:kCCDirectorResize_AutoScale];
 	
+    CGDisplayHideCursor(kCGDirectMainDisplay);
+    
 	// Enable "moving" mouse event. Default no.
 	[window_ setAcceptsMouseMovedEvents:NO];
 	
@@ -35,10 +38,10 @@
 	[window_ center];
 	
 	//[director runWithScene:[GameScene sceneWithLevel:0]];
-    [director runWithScene:[SplashLayer sceneWithId:0]];
+    [director runWithScene:[CCTransitionFade transitionWithDuration:1.0 scene:[SplashLayer sceneWithId:0]]];
 }
 
-- (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) theApplication
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)theApplication
 {
 	return YES;
 }
@@ -52,10 +55,10 @@
 
 #pragma mark AppDelegate - IBActions
 
-- (IBAction)toggleFullScreen: (id)sender
+- (IBAction)toggleFullScreen:(id)sender
 {
 	CCDirectorMac *director = (CCDirectorMac*) [CCDirector sharedDirector];
-	[director setFullScreen: ! [director isFullScreen] ];
+	[director setFullScreen: ![director isFullScreen]];
 }
 
 @end

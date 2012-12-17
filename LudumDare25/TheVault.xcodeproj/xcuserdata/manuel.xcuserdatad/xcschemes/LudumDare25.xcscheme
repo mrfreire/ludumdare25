@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "645C1736167C9DB9008F0644"
-               BuildableName = "LudumDare25.app"
-               BlueprintName = "LudumDare25"
-               ReferencedContainer = "container:LudumDare25.xcodeproj">
+               BuildableName = "TheVault.app"
+               BlueprintName = "TheVault"
+               ReferencedContainer = "container:TheVault.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "645C1736167C9DB9008F0644"
-            BuildableName = "LudumDare25.app"
-            BlueprintName = "LudumDare25"
-            ReferencedContainer = "container:LudumDare25.xcodeproj">
+            BuildableName = "TheVault.app"
+            BlueprintName = "TheVault"
+            ReferencedContainer = "container:TheVault.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -52,9 +52,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "645C1736167C9DB9008F0644"
-            BuildableName = "LudumDare25.app"
-            BlueprintName = "LudumDare25"
-            ReferencedContainer = "container:LudumDare25.xcodeproj">
+            BuildableName = "TheVault.app"
+            BlueprintName = "TheVault"
+            ReferencedContainer = "container:TheVault.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -70,9 +70,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "645C1736167C9DB9008F0644"
-            BuildableName = "LudumDare25.app"
-            BlueprintName = "LudumDare25"
-            ReferencedContainer = "container:LudumDare25.xcodeproj">
+            BuildableName = "TheVault.app"
+            BlueprintName = "TheVault"
+            ReferencedContainer = "container:TheVault.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
