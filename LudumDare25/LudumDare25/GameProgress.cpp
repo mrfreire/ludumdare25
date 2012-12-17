@@ -10,6 +10,8 @@
 
 #include <cstdio>
 
+GameProgress globalProgress;
+
 void saveProgress(const GameProgress& progress)
 {
     FILE* f = fopen("save.bin", "w");
@@ -17,6 +19,7 @@ void saveProgress(const GameProgress& progress)
         fwrite(&progress, sizeof(GameProgress), 1, f);
         fclose(f);
     }
+    globalProgress = progress;
 }
 
 GameProgress loadProgress()
@@ -26,6 +29,8 @@ GameProgress loadProgress()
     if (f) {
         fread(&progress, sizeof(GameProgress), 1, f);
         fclose(f);
+    } else {
+        progress = globalProgress;
     }
     
     return progress;

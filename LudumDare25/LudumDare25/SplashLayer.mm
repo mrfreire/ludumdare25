@@ -14,7 +14,7 @@
 
 + (CCScene*)sceneWithId:(int)i
 {
-	CCScene *scene = [CCScene node];
+    CCScene *scene = [CCScene node];
 	SplashLayer *layer = [[[SplashLayer alloc] initWithId:i] autorelease];
 	[scene addChild:layer];
 	return scene;
